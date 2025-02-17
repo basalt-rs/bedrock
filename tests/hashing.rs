@@ -1,5 +1,20 @@
 use bedrock::Config;
 
+/// Test that the hash does not change between executions of the application
+#[test]
+fn hash_consistent() {
+    let a = bedrock::Config {
+        setup: None,
+        port: 69,
+        languages: Default::default(),
+        accounts: Default::default(),
+        packet: Default::default(),
+        test_runner: Default::default(),
+    };
+
+    assert_eq!("xyp51qx1hfgtb", a.hash());
+}
+
 #[test]
 fn port_diff() {
     let a = bedrock::Config {
