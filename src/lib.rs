@@ -11,7 +11,6 @@ use packet::Packet;
 use roi::RawOrImport;
 use serde::{Deserialize, Serialize};
 use typst::foundations::Array;
-use xxhash_rust::xxh3;
 
 mod custom_serde;
 pub mod language;

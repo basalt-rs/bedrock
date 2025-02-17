@@ -28,6 +28,8 @@ fn whitespace_diff() {
     let a = Config::from_str(
         r#"
 port = 80
+accounts.admins = []
+accounts.competitors = []
 [languages]
 python3 = "latest"
 java = "21"
@@ -39,7 +41,9 @@ ocaml = { build = "ocamlc -o out solution.ml", run = "./out", source_file = "sol
 title = "Example Packet"
 preamble = '''
 ...
-'''"#,
+'''
+problems = []
+"#,
         None::<&str>,
     )
     .unwrap();
@@ -47,6 +51,8 @@ preamble = '''
     let b = Config::from_str(
         r#"
 port = 80
+accounts.admins = []
+accounts.competitors = []
 # Specify information a
 [packet]
 # import = "./packet.toml"
@@ -54,6 +60,7 @@ title = "Example Packet"
 preamble = '''
 ...
 '''
+problems = []
 
 [languages]
 python3 = "latest"
