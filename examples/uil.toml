@@ -11,7 +11,7 @@ max_file_size = 8192
 python3 = "latest"
 java = "21"
 
-[[accounts.admins]]
+[[accounts.hosts]]
 name = "Teacher"
 password = "abc123"
 
