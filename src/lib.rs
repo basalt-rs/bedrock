@@ -31,7 +31,7 @@ pub(crate) fn default_port() -> u16 {
     8517
 }
 
-/// Authentication details for a specific user (competitor or admin)
+/// Authentication details for a specific user (competitor or host)
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
 #[serde(deny_unknown_fields)]
 pub struct User {
@@ -43,8 +43,8 @@ pub struct User {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
 #[serde(deny_unknown_fields)]
 pub struct Accounts {
-    /// Administrators in charge of managing the competition
-    pub admins: Vec<User>,
+    /// Hosts in charge of managing the competition
+    pub hosts: Vec<User>,
     /// Competitors participating in the competition
     pub competitors: Vec<User>,
 }
