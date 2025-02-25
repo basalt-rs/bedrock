@@ -43,7 +43,7 @@ fn whitespace_diff() {
     let a = Config::from_str(
         r#"
 port = 80
-accounts.admins = []
+accounts.hosts = []
 accounts.competitors = []
 [languages]
 python3 = "latest"
@@ -66,7 +66,7 @@ problems = []
     let b = Config::from_str(
         r#"
 port = 80
-accounts.admins = []
+accounts.hosts = []
 accounts.competitors = []
 # Specify information a
 [packet]
