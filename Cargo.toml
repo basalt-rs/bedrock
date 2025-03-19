@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-dev = []                                      # Make it so we don't have recompile when the template.typ is changed
-scoring = ["dep:evalexpr", "evalexpr?/serde"]
+dev = []     # Make it so we don't have recompile when the template.typ is changed
+scoring = []
 
 [dependencies]
 comemo = "0.4.0"
@@ -27,7 +27,7 @@ typst-pdf = "0.12.0"
 typst-svg = "0.12.0"
 ecow = "0.2.3"
 syntect = "5.2.0"
-evalexpr = { version = "12.0.2", features = ["serde"], optional = true }
+evalexpr = { version = "12.0.2", features = ["serde"] }
 
 [dev-dependencies]
 bedrock = { path = ".", features = ["tokio"] }

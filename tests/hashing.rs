@@ -6,6 +6,7 @@ fn hash_consistent() {
     let a = bedrock::Config {
         setup: None,
         port: 69,
+        game: Default::default(),
         languages: Default::default(),
         accounts: Default::default(),
         packet: Default::default(),
@@ -20,6 +21,7 @@ fn port_diff() {
     let a = bedrock::Config {
         setup: None,
         port: 69,
+        game: Default::default(),
         languages: Default::default(),
         accounts: Default::default(),
         packet: Default::default(),
@@ -29,6 +31,7 @@ fn port_diff() {
     let b = bedrock::Config {
         setup: None,
         port: 420,
+        game: Default::default(),
         languages: Default::default(),
         accounts: Default::default(),
         packet: Default::default(),

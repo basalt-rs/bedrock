@@ -17,8 +17,6 @@ pub mod language;
 pub mod packet;
 pub mod render;
 pub mod roi;
-mod scoring;
-#[cfg(feature = "scoring")]
 pub mod scoring;
 
 mod util;
@@ -32,6 +30,14 @@ pub(crate) fn default_false() -> bool {
 
 pub(crate) fn default_port() -> u16 {
     8517
+}
+
+pub(crate) fn default_time_limit() -> Duration {
+    Duration::from_secs(60 * 75)
+}
+
+pub(crate) fn default_points() -> i32 {
+    10
 }
 
 /// Authentication details for a specific user (competitor or host)
@@ -85,12 +91,17 @@ pub struct PointsSettings {
     /// # Decrease the points by 2 each time someone completes it.
     /// score = "p - 2*c"
     /// ```
-    score: evalexpr::Node,
+    score: String,
+    #[serde(default = "default_points")]
+    question_point_value: i32,
 }
 
 impl Default for PointsSettings {
     fn default() -> Self {
-        Self { score: "p".into() }
+        Self {
+            score: "p".into(),
+            question_point_value: Default::default(),
+        }
     }
 }
 
@@ -124,7 +135,9 @@ impl Default for Game {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
 pub struct GameSettings {
+    #[serde(default)]
     mode: Game,
+    #[serde(default = "default_time_limit")]
     time: Duration,
 }
 
@@ -282,6 +295,7 @@ pub struct Config {
     /// Indicates the mode by which the competition is held.
     ///
     /// In points, each team must attempt to score the most points possible
+    #[serde(default)]
     pub game: Game,
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,

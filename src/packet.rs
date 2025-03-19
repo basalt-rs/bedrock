@@ -21,6 +21,7 @@ pub struct Problem {
     pub description: Option<RawOrImport<MarkdownRenderable, roi::Raw>>,
     /// The tests that will be used on this problem
     pub tests: Vec<Test>,
+    pub points: Option<i32>,
 }
 
 impl Problem {
