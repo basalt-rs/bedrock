@@ -4,8 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-dev = []     # Make it so we don't have recompile when the template.typ is changed
-scoring = []
+dev = [] # Make it so we don't have recompile when the template.typ is changed
 
 [dependencies]
 comemo = "0.4.0"
