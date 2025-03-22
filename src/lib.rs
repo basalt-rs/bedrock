@@ -100,7 +100,7 @@ impl Default for PointsSettings {
     fn default() -> Self {
         Self {
             score: "p".into(),
-            question_point_value: Default::default(),
+            question_point_value: default_points(),
         }
     }
 }
