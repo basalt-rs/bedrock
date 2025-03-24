@@ -7,21 +7,24 @@ trim_output = true
 max_memory = { compile = 128, run = 64 }
 max_file_size = 8192
 
+[game]
+score = "points - 2*max(completed, attempts)"
+
 [languages]
 python3 = "latest"
 java = "21"
 
 [[accounts.hosts]]
-name = "Teacher"
-password = "abc123"
+name = "host"
+password = "pwd1"
 
 [[accounts.competitors]]
-name = "StudentOne"
-password = "123abc"
+name = "team1"
+password = "pwd1"
 
 [[accounts.competitors]]
-name = "StudentTwo"
-password = "deadbeef"
+name = "team2"
+password = "pwd1"
 
 # Specify information about the packet itself
 [packet]
@@ -57,6 +60,7 @@ preamble = '''
 '''
 
 [[packet.problems]]
+points = 10
 # import = "./problem1.toml"
 title = "Alice"
 description = '''
@@ -98,6 +102,7 @@ output = '''
 visible = true
 
 [[packet.problems]]
+points = 10
 title = "Bayani"
 description = '''
 Bayani wants to printout a report of his bill expenses for the month so
@@ -137,6 +142,7 @@ Total = $ 241.16
 visible = true
 
 [[packet.problems]]
+points = 10
 title = "Candela"
 description = '''
 Candela’s teacher, who gives very difficult tests, has announced one for
@@ -260,13 +266,14 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Carla"
 description = '''
 In the UNIX operating system, Carla has recently learned, each file,
 directory, or link is "owned" by a "user", who is a member of a "group",
 and has certain "permissions" assigned to it, represented by a
-10-character string, such as `drwxrwxrwx`. The first character is 'd',
-'-', or 'l' (directory, file, or link), followed by three sets of "rwx"
+10-character string, such as `drwxrwxrwx`. The first character is `d`,
+`-`, or `l` (directory, file, or link), followed by three sets of "rwx"
 values, indicating "read, write, execute" permissions. The first set is
 the user's rights, the middle set the group's rights, and the third
 everyone else's rights to that object.
@@ -319,6 +326,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Diya"
 description = '''
 Diya has decided to take on the challenge of producing the classic
@@ -374,6 +382,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Jeremy"
 description = '''
 Jeremy knows that bitmap images can be represented by a matrix of
@@ -460,6 +469,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Kinga"
 description = '''
 Kinga knows that boolean variables are those that are either true or
@@ -517,6 +527,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Layla"
 description = '''
 Layla is considering a thought experiment in measurement systems,
@@ -587,6 +598,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Max"
 description = '''
 In ROTC class, Max has been learning how the military and other
@@ -645,6 +657,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Nandita"
 description = '''
 Nandita has learned that in some areas of the world the standard format for
@@ -699,6 +712,7 @@ visible = true
 
 
 [[packet.problems]]
+points = 10
 title = "Raymond"
 description = '''
 Raymond has just learned about complement values, with $12$ and $-13$ being
@@ -721,3 +735,35 @@ output = '''
 -9 8
 '''
 visible = true
+
+[[packet.problems.tests]]
+input = '''
+42 -24
+'''
+output = '''
+-41
+23
+'''
+visible = true
+
+[[packet.problems.tests]]
+input = '''
+10 2 3 9
+'''
+output = '''
+10 -11
+2 -3
+3 -4
+9 -10
+'''
+visible = false
+
+[[packet.problems.tests]]
+input = '''
+0 1
+'''
+output = '''
+0 -1
+1 -2
+'''
+visible = false
