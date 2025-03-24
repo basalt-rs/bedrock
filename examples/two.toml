@@ -16,7 +16,7 @@ eval $(opam env)
 
 [game]
 # a user will score two point less than the person who scored previously
-score = "p - 2*c"
+score = "p - 2*max(c,a)"
 question_point_value = 20
 
 [test_runner]

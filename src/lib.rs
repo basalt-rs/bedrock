@@ -86,6 +86,8 @@ pub struct PointsSettings {
     ///
     /// `c` or `completed`: number of teams that have already completed the problem
     ///
+    /// `a` or `attempts`: number of attempts that a team has made to solve the problem
+    ///
     /// Example:
     /// ```toml
     /// # Decrease the points by 2 each time someone completes it.
@@ -94,6 +96,8 @@ pub struct PointsSettings {
     score: String,
     #[serde(default = "default_points")]
     question_point_value: i32,
+    #[serde(default = "default_time_limit")]
+    time_limit: Duration,
 }
 
 impl Default for PointsSettings {
@@ -101,6 +105,7 @@ impl Default for PointsSettings {
         Self {
             score: "p".into(),
             question_point_value: default_points(),
+            time_limit: default_time_limit(),
         }
     }
 }
@@ -118,6 +123,7 @@ pub enum RaceMode {
 pub struct RaceSettings {
     race: RaceMode,
     arcade: bool,
+    time_limit: Option<Duration>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
@@ -131,14 +137,6 @@ impl Default for Game {
     fn default() -> Self {
         Self::Points(PointsSettings::default())
     }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
-pub struct GameSettings {
-    #[serde(default)]
-    mode: Game,
-    #[serde(default = "default_time_limit")]
-    time: Duration,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
@@ -297,6 +295,8 @@ pub struct Config {
     /// In points, each team must attempt to score the most points possible
     #[serde(default)]
     pub game: Game,
+    /// Maximum number of attempts that a user is allowed to make for a given problem
+    pub max_submissions: Option<std::num::NonZero<u32>>,
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,
     /// Accounts that will be granted access to the server
@@ -485,6 +485,7 @@ impl Default for Config {
             setup: None,
             port: default_port(),
             game: Default::default(),
+            max_submissions: None,
             languages: Default::default(),
             accounts: Default::default(),
             packet: Default::default(),

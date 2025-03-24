@@ -7,7 +7,13 @@ fn basic_scoring() {
     let config = Config::from_str(EXAMPLE_ONE_CONTENT, Some("Cargo.toml")).unwrap();
     assert_eq!(
         config
-            .score(0, EvaluationContext { num_completions: 0 })
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 0,
+                    num_attempts: 0
+                }
+            )
             .unwrap(),
         10.0
     );
@@ -18,25 +24,85 @@ fn more_complicated_scoring() {
     let config = Config::from_str(EXAMPLE_TWO_CONTENT, Some("Cargo.toml")).unwrap();
     assert_eq!(
         config
-            .score(0, EvaluationContext { num_completions: 0 })
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 0,
+                    num_attempts: 0
+                }
+            )
             .unwrap(),
         20.0
     );
     assert_eq!(
         config
-            .score(0, EvaluationContext { num_completions: 1 })
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 1,
+                    num_attempts: 0
+                }
+            )
             .unwrap(),
         18.0
     );
     assert_eq!(
         config
-            .score(1, EvaluationContext { num_completions: 0 })
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 0,
+                    num_attempts: 1
+                }
+            )
+            .unwrap(),
+        18.0
+    );
+    assert_eq!(
+        config
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 1,
+                    num_attempts: 1
+                }
+            )
+            .unwrap(),
+        18.0
+    );
+    assert_eq!(
+        config
+            .score(
+                0,
+                EvaluationContext {
+                    num_completions: 1,
+                    num_attempts: 2
+                }
+            )
+            .unwrap(),
+        16.0
+    );
+    assert_eq!(
+        config
+            .score(
+                1,
+                EvaluationContext {
+                    num_completions: 0,
+                    num_attempts: 0
+                }
+            )
             .unwrap(),
         40.0
     );
     assert_eq!(
         config
-            .score(1, EvaluationContext { num_completions: 1 })
+            .score(
+                1,
+                EvaluationContext {
+                    num_completions: 1,
+                    num_attempts: 0
+                }
+            )
             .unwrap(),
         38.0
     );
