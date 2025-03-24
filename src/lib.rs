@@ -17,6 +17,7 @@ pub mod language;
 pub mod packet;
 pub mod render;
 pub mod roi;
+pub mod scoring;
 
 mod util;
 
@@ -29,6 +30,14 @@ pub(crate) fn default_false() -> bool {
 
 pub(crate) fn default_port() -> u16 {
     8517
+}
+
+pub(crate) fn default_time_limit() -> Duration {
+    Duration::from_secs(60 * 75)
+}
+
+pub(crate) fn default_points() -> i32 {
+    10
 }
 
 /// Authentication details for a specific user (competitor or host)
@@ -59,6 +68,75 @@ pub struct Setup {
     /// Specifies commands to run before running basalt-server so that dependencies are enabled
     /// properly.
     pub init: Option<RawOrImport<String, roi::Raw>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[serde(deny_unknown_fields)]
+pub struct PointsSettings {
+    /// An expression used to evaluate how many points a competitor should get upon
+    /// completion of a problem. This expression has access to variables that can allow for
+    /// very flexible scoring mechanisms. By default however, all points will simply be
+    /// awarded upon successful submission and evaluation.
+    ///
+    /// Variables:
+    ///
+    /// `p` or `points`: number of points available for the problem
+    ///
+    /// `t` or `teams`: number of teams in the competition
+    ///
+    /// `c` or `completed`: number of teams that have already completed the problem
+    ///
+    /// `a` or `attempts`: number of attempts that a team has made to solve the problem
+    ///
+    /// Example:
+    /// ```toml
+    /// # Decrease the points by 2 each time someone completes it.
+    /// score = "p - 2*c"
+    /// ```
+    score: String,
+    #[serde(default = "default_points")]
+    question_point_value: i32,
+    #[serde(default = "default_time_limit")]
+    time_limit: Duration,
+}
+
+impl Default for PointsSettings {
+    fn default() -> Self {
+        Self {
+            score: "p".into(),
+            question_point_value: default_points(),
+            time_limit: default_time_limit(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
+#[serde(untagged)]
+pub enum RaceMode {
+    #[default]
+    Sprint,
+    Endurance,
+    Relay,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
+pub struct RaceSettings {
+    race: RaceMode,
+    arcade: bool,
+    time_limit: Option<Duration>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[serde(untagged)]
+pub enum Game {
+    Points(PointsSettings),
+    Race(RaceSettings),
+}
+
+impl Default for Game {
+    fn default() -> Self {
+        Self::Points(PointsSettings::default())
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
@@ -212,6 +290,13 @@ pub struct Config {
     /// Port on which the server will be hosted
     #[serde(default = "default_port")]
     pub port: u16,
+    /// Indicates the mode by which the competition is held.
+    ///
+    /// In points, each team must attempt to score the most points possible
+    #[serde(default)]
+    pub game: Game,
+    /// Maximum number of attempts that a user is allowed to make for a given problem
+    pub max_submissions: Option<std::num::NonZero<u32>>,
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,
     /// Accounts that will be granted access to the server
@@ -399,6 +484,8 @@ impl Default for Config {
         Self {
             setup: None,
             port: default_port(),
+            game: Default::default(),
+            max_submissions: None,
             languages: Default::default(),
             accounts: Default::default(),
             packet: Default::default(),

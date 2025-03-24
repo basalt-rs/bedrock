@@ -108,6 +108,7 @@ dependencies = [
  "bedrock",
  "comemo",
  "ecow",
+ "evalexpr",
  "lazy_static",
  "miette",
  "phf 0.11.3",
@@ -530,6 +531,15 @@ checksum = "33d852cb9b869c2a9b3df2f71a3074817f01e1844f839a144f5fcef059a4eb5d"
 dependencies = [
  "libc",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "evalexpr"
+version = "12.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02a3229bec56a977f174b32fe7b8d89e8c79ebb4493d10ad763b6676dc2dc0c9"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
