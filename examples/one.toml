@@ -26,6 +26,7 @@ max_file_size = 8192
 python3 = "latest"
 java = "21"
 ocaml = { build = "ocamlc -o out solution.ml", run = "./out", source_file = "solution.ml" }
+haskell = { build = "ghc solution.hs", run = "./solution", source_file = "solution.hs", syntax = "haskell" }
 
 [[accounts.hosts]]
 name = "Teacher"

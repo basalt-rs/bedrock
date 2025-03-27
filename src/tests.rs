@@ -1,4 +1,4 @@
-use language::{BuiltInLanguage, Language, Version};
+use language::{BuiltInLanguage, Language, Syntax, Version};
 use miette::Result;
 
 use super::*;
@@ -16,7 +16,7 @@ fn packets_parse_correctly() -> Result<()> {
 #[test]
 fn packet_files_parse_correctly() -> Result<()> {
     let mut file = Cursor::new(EXAMPLE_ONE_CONTENT);
-    let config = Config::read(&mut file, Some("Cargo.toml"))?;
+    let config = Config::read(&mut file, Some("one.toml"))?;
 
     assert_eq!(
         Some(&Language::BuiltIn {
@@ -40,9 +40,22 @@ fn packet_files_parse_correctly() -> Result<()> {
             name: "ocaml".into(),
             build: Some("ocamlc -o out solution.ml".into()),
             run: "./out".into(),
-            source_file: "solution.ml".into()
+            source_file: "solution.ml".into(),
+            syntax: Syntax::Ocaml,
         }),
         config.languages.get_by_str("ocaml")
+    );
+
+    assert_eq!(
+        Some(&Language::Custom {
+            raw_name: "haskell".into(),
+            name: "haskell".into(),
+            build: Some("ghc solution.hs".into()),
+            run: "./solution".into(),
+            source_file: "solution.hs".into(),
+            syntax: Syntax::Haskell,
+        }),
+        config.languages.get_by_str("haskell")
     );
 
     dbg!(config.hash());
@@ -53,7 +66,7 @@ fn packet_files_parse_correctly() -> Result<()> {
 #[tokio::test]
 async fn packet_files_parse_correctly_async() -> Result<()> {
     let mut file = Cursor::new(EXAMPLE_ONE_CONTENT);
-    let config = Config::read_async(&mut file, Some("cargo.toml")).await?;
+    let config = Config::read_async(&mut file, Some("one.toml")).await?;
     dbg!(config.hash());
     Ok(())
 }
