@@ -109,17 +109,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     syntax: if let Some(syntax) = syntax {
                         syntax
                     } else {
-                        // This is such a hack
-                        #[derive(Debug, Deserialize)]
-                        struct SyntaxDeser {
-                            syntax: Syntax,
-                        }
-                        toml_edit::de::from_str::<SyntaxDeser>(&format!(
-                            "syntax = {}",
-                            &toml_edit::value(&*key).to_string()
-                        ))
-                        .map_err(serde::de::Error::custom)?
-                        .syntax
+                        Syntax::deserialize(serde::de::value::StrDeserializer::new(&key))?
                     },
                     source_file: source_file.into_owned(),
                 },
