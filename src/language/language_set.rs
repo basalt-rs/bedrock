@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::language::Version;
 
-use super::{BuiltInLanguage, Language};
+use super::{BuiltInLanguage, Language, Syntax};
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct LanguageSet {
@@ -100,11 +100,27 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     build,
                     run,
                     source_file,
+                    syntax,
                 } => Language::Custom {
                     name: name.unwrap_or_else(|| key.clone()).into_owned(),
-                    raw_name: key.into_owned(),
+                    raw_name: key.clone().into_owned(),
                     build: build.map(Cow::into_owned),
                     run: run.into_owned(),
+                    syntax: if let Some(syntax) = syntax {
+                        syntax
+                    } else {
+                        // This is such a hack
+                        #[derive(Debug, Deserialize)]
+                        struct SyntaxDeser {
+                            syntax: Syntax,
+                        }
+                        toml_edit::de::from_str::<SyntaxDeser>(&format!(
+                            "syntax = {}",
+                            &toml_edit::value(&*key).to_string()
+                        ))
+                        .map_err(serde::de::Error::custom)?
+                        .syntax
+                    },
                     source_file: source_file.into_owned(),
                 },
             };
@@ -145,6 +161,7 @@ impl Serialize for LanguageSet {
                     build,
                     run,
                     source_file,
+                    syntax,
                 } => {
                     map.serialize_entry(
                         raw_name,
@@ -153,6 +170,7 @@ impl Serialize for LanguageSet {
                             build: build.as_ref().map(Into::into),
                             run: run.into(),
                             source_file: source_file.into(),
+                            syntax: Some(*syntax),
                         },
                     )?;
                 }
@@ -177,6 +195,7 @@ enum TomlLanguage<'a> {
         build: Option<Cow<'a, str>>,
         run: Cow<'a, str>,
         source_file: Cow<'a, str>,
+        syntax: Option<Syntax>,
     },
 }
 

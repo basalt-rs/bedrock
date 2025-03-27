@@ -1,9 +1,10 @@
 mod language_set;
+use std::str::FromStr;
+
 pub use language_set::LanguageSet;
 
 use phf::{phf_map, phf_ordered_map};
 use serde::{Deserialize, Serialize};
-use std::str::FromStr;
 use strum::VariantNames;
 
 struct LanguageVersion {
@@ -16,6 +17,7 @@ struct LanguageVersion {
 struct Builtin {
     builtin: BuiltInLanguage,
     source_file: &'static str,
+    syntax: Syntax,
     versions: phf::OrderedMap<&'static str, LanguageVersion>,
 }
 
@@ -24,6 +26,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
     "python3" => Builtin {
         builtin: BuiltInLanguage::Python3,
         source_file: "solution.py",
+        syntax: Syntax::Python,
         versions: phf_ordered_map! {
             "latest" => LanguageVersion {
                 build: None,
@@ -36,6 +39,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
     "java" => Builtin {
         builtin: BuiltInLanguage::Java,
         source_file: "Solution.java",
+        syntax: Syntax::Java,
         versions: phf_ordered_map! { // `java[c]` is fine since we only allow one language at a time
             "8" => LanguageVersion {
                 build: Some("javac Solution.java"),
@@ -60,6 +64,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
     "javascript" => Builtin {
         builtin: BuiltInLanguage::JavaScript,
         source_file: "solution.js",
+        syntax: Syntax::Javascript,
         versions: phf_ordered_map! {
             "latest" => LanguageVersion {
                 build: None,
@@ -72,6 +77,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
     "rust" => Builtin {
         builtin: BuiltInLanguage::Rust,
         source_file: "solution.rs",
+        syntax: Syntax::Rust,
         versions: phf_ordered_map! {
             "latest" => LanguageVersion {
                 build: Some("rustc -o solution solution.rs"),
@@ -186,6 +192,10 @@ impl BuiltInLanguage {
             Version::Specific(v) => bil.versions[v].init_command,
         }
     }
+
+    pub fn syntax(self) -> Syntax {
+        BUILTINS[self.as_str()].syntax
+    }
 }
 
 impl From<&str> for BuiltInLanguage {
@@ -208,6 +218,60 @@ pub enum Version {
     Specific(String),
 }
 
+// Mostly from <https://github.com/ajaxorg/ace/tree/master/src/mode>
+#[derive(
+    Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Ord, PartialOrd, Hash, Default,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum Syntax {
+    Ada,
+    Basic,
+    Batchfile,
+    #[serde(alias = "c", alias = "cpp")]
+    CCpp,
+    Clojure,
+    Cobol,
+    Csharp,
+    D,
+    Dart,
+    Ejs,
+    Elixir,
+    Elm,
+    Erlang,
+    Forth,
+    Fortran,
+    Fsharp,
+    Golang,
+    Haskell,
+    Java,
+    Javascript,
+    Julia,
+    Kotlin,
+    Lisp,
+    Lua,
+    Mips,
+    Nim,
+    Nix,
+    Ocaml,
+    Odin,
+    Pascal,
+    Perl,
+    Php,
+    #[default]
+    PlainText,
+    Powershell,
+    Prolog,
+    Python,
+    R,
+    Ruby,
+    Rust,
+    Scala,
+    Scheme,
+    Sh,
+    Typescript,
+    Zig,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
 pub enum Language {
     BuiltIn {
@@ -220,6 +284,7 @@ pub enum Language {
         build: Option<String>,
         run: String,
         source_file: String,
+        syntax: Syntax,
     },
 }
 
@@ -270,6 +335,13 @@ impl Language {
         match self {
             Language::BuiltIn { language, version } => language.init_command(version),
             Language::Custom { .. } => None,
+        }
+    }
+
+    pub fn syntax(&self) -> Syntax {
+        match self {
+            Language::BuiltIn { language, .. } => language.syntax(),
+            Language::Custom { syntax, .. } => *syntax,
         }
     }
 }
