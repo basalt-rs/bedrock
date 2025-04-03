@@ -23,6 +23,70 @@ password = "123abc"
 name = "StudentTwo"
 password = "deadbeef"
 
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
+[[accounts.competitors]]
+name = "StudentTwo"
+password = "deadbeef"
+
 # Specify information about the packet itself
 [packet]
 title = "This is a fun packet to demonstrate the markdown capabilities!"

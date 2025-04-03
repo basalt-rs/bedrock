@@ -10,7 +10,7 @@ use miette::{Diagnostic, LabeledSpan, NamedSource, SourceCode};
 use packet::Packet;
 use roi::RawOrImport;
 use serde::{Deserialize, Serialize};
-use typst::foundations::Array;
+use typst::foundations::{Array, Dict, IntoValue, Str, Value};
 
 mod custom_serde;
 pub mod language;
@@ -56,6 +56,39 @@ pub struct Accounts {
     pub hosts: Vec<User>,
     /// Competitors participating in the competition
     pub competitors: Vec<User>,
+}
+
+impl Accounts {
+    pub fn to_value(&self) -> (Value, Value) {
+        let hosts = self
+            .hosts
+            .iter()
+            .map(|h| {
+                [
+                    (Str::from("username"), Str::from(&*h.name).into_value()),
+                    (Str::from("password"), Str::from(&*h.password).into_value()),
+                ]
+                .into_iter()
+                .collect::<Dict>()
+                .into_value()
+            })
+            .collect::<Array>();
+        let competitors = self
+            .competitors
+            .iter()
+            .map(|c| {
+                [
+                    (Str::from("username"), Str::from(&*c.name).into_value()),
+                    (Str::from("password"), Str::from(&*c.password).into_value()),
+                ]
+                .into_iter()
+                .collect::<Dict>()
+                .into_value()
+            })
+            .collect::<Array>();
+
+        (hosts.into_value(), competitors.into_value())
+    }
 }
 
 /// Configuration for setting up the docker container and starting the server
@@ -475,6 +508,97 @@ impl Config {
         // XXX: I would really love it if typst offered an API that did not have to create a vec
         // just to render the PDF
         let vec = self.render_pdf(template)?;
+        writer.write_all(&vec)
+    }
+
+    /// Render competition logins to PDF, either using a provided template (written in
+    /// [typst](https://typst.app/)) or the default template
+    ///
+    /// # Template
+    ///
+    /// The template currently provides several variables that contain information about the
+    /// competition.
+    ///
+    /// - `#title`: `str` - the title of the competition
+    /// - `#preamble`: `content` - rendered markdown of the competition
+    /// - `#problems`: `array<Dict>` - array of problems in the packet
+    pub fn render_login_pdf(&self, template: Option<String>) -> std::io::Result<Vec<u8>> {
+        let template = if let Some(template) = template {
+            template
+        } else {
+            #[cfg(feature = "dev")]
+            {
+                std::fs::read_to_string("./data/login-template.typ").unwrap()
+            }
+            #[cfg(not(feature = "dev"))]
+            {
+                include_str!("../data/login-template.typ").into()
+            }
+        };
+
+        let mut world = render::typst::TypstWrapperWorld::new(template);
+
+        let mut errs = Vec::new();
+        let mut problems = Array::with_capacity(self.packet.problems.len());
+        for p in &self.packet.problems {
+            match p.as_value(&world) {
+                Ok(v) => problems.push(v),
+                Err(err) => errs.push(err),
+            }
+        }
+
+        world
+            .library
+            .global
+            .scope_mut()
+            .define("problems", problems);
+
+        world
+            .library
+            .global
+            .scope_mut()
+            .define("title", self.packet.title.as_str());
+
+        let preamble = self
+            .packet
+            .preamble
+            .as_deref()
+            .map(|s| s.content(&world))
+            .transpose()?;
+        world
+            .library
+            .global
+            .scope_mut()
+            .define("preamble", preamble);
+
+        let (hosts, competitors) = self.accounts.to_value();
+        world.library.global.scope_mut().define("hosts", hosts);
+        world
+            .library
+            .global
+            .scope_mut()
+            .define("competitors", competitors);
+
+        let document = typst::compile(&world)
+            .output
+            .expect("Error compiling typst");
+        typst_pdf::pdf(&document, &typst_pdf::PdfOptions::default())
+            .map_err(|e| std::io::Error::other(format!("{:?}", e)))
+    }
+
+    /// Note: In the current implementation of `typst-pdf`, this just renders to a vector and then
+    /// writes that to the `writer`.
+    pub fn write_login_pdf<W>(
+        &self,
+        writer: &mut W,
+        template: Option<String>,
+    ) -> std::io::Result<()>
+    where
+        W: std::io::Write,
+    {
+        // XXX: I would really love it if typst offered an API that did not have to create a vec
+        // just to render the PDF
+        let vec = self.render_login_pdf(template)?;
         writer.write_all(&vec)
     }
 }
