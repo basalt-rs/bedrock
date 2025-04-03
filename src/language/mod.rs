@@ -273,7 +273,7 @@ pub enum Syntax {
 }
 
 impl Syntax {
-    pub fn from_str<E: serde::de::Error>(s: impl AsRef<str>) -> Result<Self, E> {
+    pub fn from_string<E: serde::de::Error>(s: impl AsRef<str>) -> Result<Self, E> {
         Syntax::deserialize(serde::de::value::StrDeserializer::<E>::new(s.as_ref()))
     }
 }

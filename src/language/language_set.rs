@@ -107,7 +107,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     build: build.map(Cow::into_owned),
                     run: run.into_owned(),
                     syntax: syntax
-                        .or_else(|| Syntax::from_str::<M::Error>(key).ok())
+                        .or_else(|| Syntax::from_string::<M::Error>(key).ok())
                         .unwrap_or_default(),
                     source_file: source_file.into_owned(),
                 },
