@@ -272,6 +272,12 @@ pub enum Syntax {
     Zig,
 }
 
+impl Syntax {
+    pub fn from_str<E: serde::de::Error>(s: impl AsRef<str>) -> Result<Self, E> {
+        Syntax::deserialize(serde::de::value::StrDeserializer::<E>::new(s.as_ref()))
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
 pub enum Language {
     BuiltIn {

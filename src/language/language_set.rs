@@ -106,11 +106,9 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     raw_name: key.clone().into_owned(),
                     build: build.map(Cow::into_owned),
                     run: run.into_owned(),
-                    syntax: if let Some(syntax) = syntax {
-                        syntax
-                    } else {
-                        Syntax::deserialize(serde::de::value::StrDeserializer::new(&key))?
-                    },
+                    syntax: syntax
+                        .or_else(|| Syntax::from_str::<M::Error>(key).ok())
+                        .unwrap_or_default(),
                     source_file: source_file.into_owned(),
                 },
             };
