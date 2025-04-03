@@ -1,5 +1,5 @@
 # Adapted from https://www.uiltexas.org/files/academics/Mitra_CompSci_District_2018_Programming_Packet.pdf
-port = 80
+port = 8517
 
 [test_runner]
 timeout_ms = 60_000
