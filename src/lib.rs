@@ -126,11 +126,11 @@ pub struct PointsSettings {
     /// # Decrease the points by 2 each time someone completes it.
     /// score = "p - 2*c"
     /// ```
-    score: String,
+    pub score: String,
     #[serde(default = "default_points")]
-    question_point_value: i32,
+    pub question_point_value: i32,
     #[serde(default = "default_time_limit")]
-    time_limit: Duration,
+    pub time_limit: Duration,
 }
 
 impl Default for PointsSettings {
@@ -154,9 +154,9 @@ pub enum RaceMode {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
 pub struct RaceSettings {
-    race: RaceMode,
-    arcade: bool,
-    time_limit: Option<Duration>,
+    pub race: RaceMode,
+    pub arcade: bool,
+    pub time_limit: Option<Duration>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
