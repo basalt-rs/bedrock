@@ -31,7 +31,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             "latest" => LanguageVersion {
                 build: None,
                 run: "python3 ./solution.py",
-                install_command: Some("dnf install python3"),
+                install_command: Some("dnf install python3 -y"),
                 init_command: None,
             }
         },
@@ -44,19 +44,19 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             "8" => LanguageVersion {
                 build: Some("javac Solution.java"),
                 run: "java Solution",
-                install_command: Some("dnf install java-1.8.0-openjdk-devel"),
+                install_command: Some("dnf install java-1.8.0-openjdk-devel -y"),
                 init_command: None,
             },
             "11" => LanguageVersion {
                 build: Some("javac Solution.java"),
                 run: "java Solution",
-                install_command: Some("dnf install java-11-openjdk-devel"),
+                install_command: Some("dnf install java-11-openjdk-devel -y"),
                 init_command: None,
             },
             "21" => LanguageVersion {
                 build: Some("javac Solution.java"),
                 run: "java Solution",
-                install_command: Some("dnf install java-21-openjdk-devel"),
+                install_command: Some("dnf install java-21-openjdk-devel -y"),
                 init_command: None,
             },
         },
@@ -69,7 +69,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             "latest" => LanguageVersion {
                 build: None,
                 run: "nodejs solution.js",
-                install_command: Some("dnf install nodejs20"),
+                install_command: Some("dnf install nodejs20 -y"),
                 init_command: None,
             }
         },
@@ -82,7 +82,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             "latest" => LanguageVersion {
                 build: Some("rustc -o solution solution.rs"),
                 run: "./solution",
-                install_command: Some("dnf install rust"),
+                install_command: Some("dnf install rust -y"),
                 init_command: None,
             }
         },
