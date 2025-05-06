@@ -28,6 +28,10 @@ pub(crate) fn default_false() -> bool {
     false
 }
 
+pub(crate) fn default_true() -> bool {
+    false
+}
+
 pub(crate) fn default_port() -> u16 {
     8517
 }
@@ -323,6 +327,9 @@ pub struct Config {
     /// Port on which the server will be hosted
     #[serde(default = "default_port")]
     pub port: u16,
+    /// Whether this competition should host the web client
+    #[serde(default = "default_true")]
+    pub web_client: bool,
     /// Indicates the mode by which the competition is held.
     ///
     /// In points, each team must attempt to score the most points possible
@@ -346,6 +353,7 @@ impl std::hash::Hash for Config {
         self.setup.hash(state);
         // skip port
         // self.setup.hash(port);
+        self.web_client.hash(state);
         self.languages.hash(state);
         self.accounts.hash(state);
         self.packet.hash(state);
@@ -608,6 +616,7 @@ impl Default for Config {
         Self {
             setup: None,
             port: default_port(),
+            web_client: true,
             game: Default::default(),
             max_submissions: None,
             languages: Default::default(),

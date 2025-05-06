@@ -6,6 +6,7 @@ fn hash_consistent() {
     let a = bedrock::Config {
         setup: None,
         port: 69,
+        web_client: true,
         game: Default::default(),
         max_submissions: None,
         languages: Default::default(),
@@ -14,7 +15,7 @@ fn hash_consistent() {
         test_runner: Default::default(),
     };
 
-    assert_eq!("xyp51qx1hfgtb", a.hash());
+    assert_eq!("1y15mwwp3sysd", a.hash());
 }
 
 #[test]
@@ -22,6 +23,7 @@ fn port_diff() {
     let a = bedrock::Config {
         setup: None,
         port: 69,
+        web_client: true,
         game: Default::default(),
         max_submissions: None,
         languages: Default::default(),
@@ -33,6 +35,7 @@ fn port_diff() {
     let b = bedrock::Config {
         setup: None,
         port: 420,
+        web_client: true,
         game: Default::default(),
         max_submissions: None,
         languages: Default::default(),
