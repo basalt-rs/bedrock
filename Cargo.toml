@@ -26,7 +26,9 @@ typst-kit = { version = "0.12.0", features = ["embed-fonts"] }
 typst-pdf = "0.12.0"
 typst-svg = "0.12.0"
 ecow = "0.2.3"
-syntect = "5.2.0"
+syntect = { version = "5.2.0", default-features = false, features = [
+  "default-fancy",
+] }
 evalexpr = { version = "12.0.2", features = ["serde"] }
 
 [dev-dependencies]
