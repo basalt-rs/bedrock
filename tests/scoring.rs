@@ -11,7 +11,10 @@ fn basic_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 0,
-                    num_attempts: 0
+                    num_attempts: 0,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -28,7 +31,10 @@ fn more_complicated_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 0,
-                    num_attempts: 0
+                    num_attempts: 0,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -40,7 +46,10 @@ fn more_complicated_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 1,
-                    num_attempts: 0
+                    num_attempts: 0,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -52,7 +61,10 @@ fn more_complicated_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 0,
-                    num_attempts: 1
+                    num_attempts: 1,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -64,7 +76,10 @@ fn more_complicated_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 1,
-                    num_attempts: 1
+                    num_attempts: 1,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -76,7 +91,10 @@ fn more_complicated_scoring() {
                 0,
                 EvaluationContext {
                     num_completions: 1,
-                    num_attempts: 2
+                    num_attempts: 2,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -88,7 +106,10 @@ fn more_complicated_scoring() {
                 1,
                 EvaluationContext {
                     num_completions: 0,
-                    num_attempts: 0
+                    num_attempts: 0,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),
@@ -100,7 +121,10 @@ fn more_complicated_scoring() {
                 1,
                 EvaluationContext {
                     num_completions: 1,
-                    num_attempts: 0
+                    num_attempts: 0,
+                    passed_tests: 0,
+                    failed_tests: 0,
+                    number_tests: 0,
                 }
             )
             .unwrap(),

@@ -5,6 +5,9 @@ use crate::Config;
 pub struct EvaluationContext {
     pub num_completions: u32,
     pub num_attempts: u32,
+    pub passed_tests: u32,
+    pub failed_tests: u32,
+    pub number_tests: u32,
 }
 
 fn type_name(v: Value) -> String {
@@ -57,6 +60,12 @@ impl Scorable for Config {
                     "teams" => int teams,
                     "a" => int ctx.num_attempts,
                     "attempts" => int ctx.num_attempts,
+                    "pass" => int ctx.passed_tests,
+                    "passed_tests" => int ctx.passed_tests,
+                    "fail" => int ctx.failed_tests,
+                    "failed_tests" => int ctx.failed_tests,
+                    "tests" => int ctx.number_tests,
+                    "number_tests" => int ctx.number_tests,
                 }
                 .map_err(|e| ScoreError::ContextInitialization(e.to_string()))?;
 
