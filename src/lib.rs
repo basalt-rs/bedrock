@@ -5,6 +5,7 @@ use std::{
     time::Duration,
 };
 
+use events::Events;
 use language::LanguageSet;
 use miette::{Diagnostic, LabeledSpan, NamedSource, SourceCode};
 use packet::Packet;
@@ -13,6 +14,7 @@ use serde::{Deserialize, Serialize};
 use typst::foundations::{Array, Dict, IntoValue, Str, Value};
 
 mod custom_serde;
+pub mod events;
 pub mod language;
 pub mod packet;
 pub mod render;
@@ -335,6 +337,8 @@ pub struct Config {
     /// In points, each team must attempt to score the most points possible
     #[serde(default)]
     pub game: Game,
+    #[serde(default)]
+    pub events: Events,
     /// Maximum number of attempts that a user is allowed to make for a given problem
     pub max_submissions: Option<std::num::NonZero<u32>>,
     /// List of languages available for the server
@@ -617,6 +621,7 @@ impl Default for Config {
             setup: None,
             port: default_port(),
             web_client: true,
+            events: Default::default(),
             game: Default::default(),
             max_submissions: None,
             languages: Default::default(),
