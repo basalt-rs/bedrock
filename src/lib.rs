@@ -364,7 +364,7 @@ impl std::hash::Hash for Config {
         self.setup.hash(state);
         // skip port
         // self.setup.hash(port);
-        //self.events.hash(state);
+        // self.events.hash(state);
         self.web_client.hash(state);
         self.languages.hash(state);
         self.accounts.hash(state);
