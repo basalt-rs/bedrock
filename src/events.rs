@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use tokio::task::JoinSet;
 
 #[derive(Debug, Hash, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
 pub struct EventRegistration<T: std::marker::Sync>(Vec<BedrockEventConfig<T>>);
@@ -9,7 +8,22 @@ impl<T: std::marker::Sync> EventRegistration<T> {
     pub fn validate(&self) -> bool {
         self.0.iter().all(BedrockEventConfig::file_exists)
     }
-    pub async fn read_all(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+    /// Synchronously retrieve file contents and path
+    pub fn read(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+        self.0
+            .iter()
+            .map(|x| {
+                let path = x.file.clone();
+                std::fs::read_to_string(&path).map(|content| (path, content))
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .collect::<Result<Vec<(PathBuf, String)>, std::io::Error>>()
+    }
+    #[cfg(feature = "tokio")]
+    /// Asynchronously retrieve file contents and path
+    pub async fn read_all_async(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+        use tokio::task::JoinSet;
         self.0
             .iter()
             .map(|x| {
@@ -96,47 +110,62 @@ pub struct Events {
 }
 
 impl Events {
-    pub async fn get_all_files(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+    /// Synchronously fetch the contents of all files along with their paths
+    pub fn get_all_files(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+        let result = vec![self.on_score.read(), self.on_complete.read()]
+            .into_iter()
+            .collect::<Result<Vec<Vec<_>>, std::io::Error>>()?
+            .into_iter()
+            .flatten()
+            .collect();
+
+        Ok(result)
+    }
+
+    #[cfg(feature = "tokio")]
+    /// Asynchronously fetch the contents of all files along with their paths
+    pub async fn get_all_files_async(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+        use tokio::task::JoinSet;
         let mut jset = JoinSet::new();
         jset.spawn({
             let x = self.on_score.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_complete.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_pause.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_unpause.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_test_evaluation.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_submission_evaluation.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_team_kick.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_team_ban.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_announcement.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         jset.spawn({
             let x = self.on_check_in.clone();
-            async move { x.read_all().await }
+            async move { x.read_all_async().await }
         });
         let data = jset
             .join_all()
