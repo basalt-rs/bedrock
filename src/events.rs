@@ -53,10 +53,6 @@ pub struct BedrockEventConfig<T: std::marker::Sync> {
 }
 
 impl<T: std::marker::Sync> BedrockEventConfig<T> {
-    pub async fn read_file_data(&self) -> Result<String, std::io::Error> {
-        tokio::fs::read_to_string(&self.file).await
-    }
-
     pub fn file_exists(&self) -> bool {
         self.file.exists()
     }
@@ -112,12 +108,23 @@ pub struct Events {
 impl Events {
     /// Synchronously fetch the contents of all files along with their paths
     pub fn get_all_files(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
-        let result = vec![self.on_score.read(), self.on_complete.read()]
-            .into_iter()
-            .collect::<Result<Vec<Vec<_>>, std::io::Error>>()?
-            .into_iter()
-            .flatten()
-            .collect();
+        let result = vec![
+            self.on_score.read(),
+            self.on_complete.read(),
+            self.on_pause.read(),
+            self.on_unpause.read(),
+            self.on_test_evaluation.read(),
+            self.on_submission_evaluation.read(),
+            self.on_team_kick.read(),
+            self.on_team_ban.read(),
+            self.on_announcement.read(),
+            self.on_check_in.read(),
+        ]
+        .into_iter()
+        .collect::<Result<Vec<Vec<_>>, std::io::Error>>()?
+        .into_iter()
+        .flatten()
+        .collect();
 
         Ok(result)
     }
