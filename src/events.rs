@@ -9,7 +9,7 @@ impl<T> EventRegistration<T> {
         self.0.iter().all(BedrockEventConfig::file_exists)
     }
     /// Synchronously retrieve file contents and path
-    pub fn read(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
+    pub fn read_all(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
         self.0
             .iter()
             .map(|x| {
@@ -108,16 +108,16 @@ impl Events {
     /// Synchronously fetch the contents of all files along with their paths
     pub fn get_all_files(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
         let result = vec![
-            self.on_score.read(),
-            self.on_complete.read(),
-            self.on_pause.read(),
-            self.on_unpause.read(),
-            self.on_test_evaluation.read(),
-            self.on_submission_evaluation.read(),
-            self.on_team_kick.read(),
-            self.on_team_ban.read(),
-            self.on_announcement.read(),
-            self.on_check_in.read(),
+            self.on_score.read_all(),
+            self.on_complete.read_all(),
+            self.on_pause.read_all(),
+            self.on_unpause.read_all(),
+            self.on_test_evaluation.read_all(),
+            self.on_submission_evaluation.read_all(),
+            self.on_team_kick.read_all(),
+            self.on_team_ban.read_all(),
+            self.on_announcement.read_all(),
+            self.on_check_in.read_all(),
         ]
         .into_iter()
         .collect::<Result<Vec<Vec<_>>, std::io::Error>>()?
@@ -163,8 +163,8 @@ impl Events {
 
     pub async fn validate(&self) -> bool {
         macro_rules! validate {
-            ($($x: ident),+$(,)?) => {
-                $(self.$x.0.iter().all(BedrockEventConfig::file_exists))&&+
+            ($($ident: ident),+$(,)?) => {
+                $(self.$ident.0.iter().all(BedrockEventConfig::file_exists))&&+
             }
         }
 
