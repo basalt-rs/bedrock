@@ -2,9 +2,9 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Hash, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
-pub struct EventRegistration<T: std::marker::Sync>(Vec<BedrockEventConfig<T>>);
+pub struct EventRegistration<T>(Vec<BedrockEventConfig<T>>);
 
-impl<T: std::marker::Sync> EventRegistration<T> {
+impl<T> EventRegistration<T> {
     pub fn validate(&self) -> bool {
         self.0.iter().all(BedrockEventConfig::file_exists)
     }
@@ -43,16 +43,13 @@ impl<T: std::marker::Sync> EventRegistration<T> {
 }
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Default, Deserialize, Serialize)]
-pub struct BedrockEventConfig<T: std::marker::Sync> {
+pub struct BedrockEventConfig<T> {
     pub file: PathBuf,
-    #[serde(
-        flatten,
-        bound(serialize = "T: Serialize", deserialize = "T: Deserialize<'de>")
-    )]
+    #[serde(flatten)]
     pub options: T,
 }
 
-impl<T: std::marker::Sync> BedrockEventConfig<T> {
+impl<T> BedrockEventConfig<T> {
     pub fn file_exists(&self) -> bool {
         self.file.exists()
     }
@@ -165,7 +162,7 @@ impl Events {
     }
 
     pub async fn validate(&self) -> bool {
-       macro_rules! validate {
+        macro_rules! validate {
             ($($x: ident),+$(,)?) => {
                 $(self.$x.0.iter().all(BedrockEventConfig::file_exists))&&+
             }
