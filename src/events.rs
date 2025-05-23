@@ -185,47 +185,23 @@ impl Events {
     }
 
     pub async fn validate(&self) -> bool {
-        self.on_score.0.iter().all(BedrockEventConfig::file_exists)
-            && self
-                .on_complete
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self.on_pause.0.iter().all(BedrockEventConfig::file_exists)
-            && self
-                .on_unpause
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_test_evaluation
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_submission_evaluation
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_team_kick
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_team_ban
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_announcement
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
-            && self
-                .on_check_in
-                .0
-                .iter()
-                .all(BedrockEventConfig::file_exists)
+       macro_rules! validate {
+            ($($x: ident),+$(,)?) => {
+                $(self.$x.0.iter().all(BedrockEventConfig::file_exists))&&+
+            }
+        }
+
+        validate!(
+            on_score,
+            on_complete,
+            on_pause,
+            on_unpause,
+            on_test_evaluation,
+            on_submission_evaluation,
+            on_team_kick,
+            on_team_ban,
+            on_announcement,
+            on_check_in,
+        )
     }
 }
