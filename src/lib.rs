@@ -51,7 +51,14 @@ pub(crate) fn default_points() -> i32 {
 #[serde(deny_unknown_fields)]
 pub struct User {
     pub name: String,
+    pub display_name: Option<String>,
     pub password: String,
+}
+
+impl User {
+    pub fn display_name(&self) -> &str {
+        self.display_name.as_ref().unwrap_or(&self.name)
+    }
 }
 
 /// Set of users that are either hosts or competitors
