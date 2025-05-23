@@ -9,7 +9,10 @@ max_memory = { compile = 128, run = 64 }
 max_file_size = 8192
 
 [[events.on_score]]
-file = ""
+file = "./tests/on-score.js"
+name = ""
+[[events.on_complete]]
+file = "./tests/on-complete.ts"
 
 [game]
 score = "points - 2*max(completed, attempts)"

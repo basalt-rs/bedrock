@@ -2,29 +2,33 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tokio::task::JoinSet;
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
+#[derive(Debug, Hash, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
 pub struct EventRegistration<T: std::marker::Sync>(Vec<BedrockEventConfig<T>>);
 
 impl<T: std::marker::Sync> EventRegistration<T> {
     pub fn validate(&self) -> bool {
         self.0.iter().all(BedrockEventConfig::file_exists)
     }
-    pub async fn read_all(&self) -> Result<Vec<String>, std::io::Error> {
+    pub async fn read_all(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
         self.0
             .iter()
             .map(|x| {
                 let path = x.file.clone();
-                async { tokio::fs::read_to_string(path).await }
+                async {
+                    tokio::fs::read_to_string(&path)
+                        .await
+                        .map(|content| (path, content))
+                }
             })
             .collect::<JoinSet<_>>()
             .join_all()
             .await
             .into_iter()
-            .collect::<Result<Vec<String>, std::io::Error>>()
+            .collect::<Result<Vec<(PathBuf, String)>, std::io::Error>>()
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, Deserialize, Serialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Default, Deserialize, Serialize)]
 pub struct BedrockEventConfig<T: std::marker::Sync> {
     pub file: PathBuf,
     #[serde(
@@ -44,55 +48,55 @@ impl<T: std::marker::Sync> BedrockEventConfig<T> {
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnScore {
     name: String,
 }
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnComplete {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnPause {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnUnpause {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnTestEvaluation {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnSubmissionEvaluation {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnTeamKick {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnTeamBan {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnAnnouncement {}
-#[derive(PartialEq, Eq, Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnCheckIn {}
 
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Clone, Hash, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct Events {
     #[serde(default)]
-    pub on_score: EventRegistration<BedrockEventConfig<OnScore>>,
+    pub on_score: EventRegistration<OnScore>,
     #[serde(default)]
-    pub on_complete: EventRegistration<BedrockEventConfig<OnComplete>>,
+    pub on_complete: EventRegistration<OnComplete>,
     #[serde(default)]
-    pub on_pause: EventRegistration<BedrockEventConfig<OnPause>>,
+    pub on_pause: EventRegistration<OnPause>,
     #[serde(default)]
-    pub on_unpause: EventRegistration<BedrockEventConfig<OnUnpause>>,
+    pub on_unpause: EventRegistration<OnUnpause>,
     #[serde(default)]
-    pub on_test_evaluation: EventRegistration<BedrockEventConfig<OnTestEvaluation>>,
+    pub on_test_evaluation: EventRegistration<OnTestEvaluation>,
     #[serde(default)]
-    pub on_submission_evaluation: EventRegistration<BedrockEventConfig<OnSubmissionEvaluation>>,
+    pub on_submission_evaluation: EventRegistration<OnSubmissionEvaluation>,
     #[serde(default)]
-    pub on_team_kick: EventRegistration<BedrockEventConfig<OnTeamKick>>,
+    pub on_team_kick: EventRegistration<OnTeamKick>,
     #[serde(default)]
-    pub on_team_ban: EventRegistration<BedrockEventConfig<OnTeamBan>>,
+    pub on_team_ban: EventRegistration<OnTeamBan>,
     #[serde(default)]
-    pub on_announcement: EventRegistration<BedrockEventConfig<OnAnnouncement>>,
+    pub on_announcement: EventRegistration<OnAnnouncement>,
     #[serde(default)]
-    pub on_check_in: EventRegistration<BedrockEventConfig<OnCheckIn>>,
+    pub on_check_in: EventRegistration<OnCheckIn>,
 }
 
 impl Events {
-    pub async fn get_all_files(&self) -> Result<Vec<String>, std::io::Error> {
+    pub async fn get_all_files(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
         let mut jset = JoinSet::new();
         jset.spawn({
             let x = self.on_score.clone();
