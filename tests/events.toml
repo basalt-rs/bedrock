@@ -10,7 +10,6 @@ max_file_size = 8192
 
 [[events.on_score]]
 file = "./tests/on-score.js"
-name = ""
 [[events.on_complete]]
 file = "./tests/on-complete.ts"
 

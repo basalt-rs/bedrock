@@ -58,9 +58,11 @@ impl<T: std::marker::Sync> BedrockEventConfig<T> {
     }
 }
 
+// These are configuration options for different event registration types
 #[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnScore {
-    name: String,
+    // additional configuration options can be specified like so
+    //pub name: String,
 }
 #[derive(PartialEq, Hash, Eq, Debug, Clone, Default, Serialize, Deserialize)]
 pub struct OnComplete {}
