@@ -136,46 +136,26 @@ impl Events {
     pub async fn get_all_files_async(&self) -> Result<Vec<(PathBuf, String)>, std::io::Error> {
         use tokio::task::JoinSet;
         let mut jset = JoinSet::new();
-        jset.spawn({
-            let x = self.on_score.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_complete.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_pause.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_unpause.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_test_evaluation.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_submission_evaluation.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_team_kick.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_team_ban.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_announcement.clone();
-            async move { x.read_all_async().await }
-        });
-        jset.spawn({
-            let x = self.on_check_in.clone();
-            async move { x.read_all_async().await }
-        });
+        macro_rules! spawn {
+            ($($ident: ident),+$(,)?) => {
+                $(jset.spawn({
+                    let x = self.$ident.clone();
+                    async move { x.read_all_async().await }
+                });)+
+            }
+        }
+        spawn!(
+            on_score,
+            on_complete,
+            on_pause,
+            on_unpause,
+            on_test_evaluation,
+            on_submission_evaluation,
+            on_team_kick,
+            on_team_ban,
+            on_announcement,
+            on_check_in,
+        );
         let data = jset
             .join_all()
             .await
