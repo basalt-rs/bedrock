@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
 #[derive(Debug, Hash, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
-pub struct EventRegistration<T>(Vec<BedrockEventConfig<T>>);
+pub struct EventRegistration<T>(pub Vec<BedrockEventConfig<T>>);
 
 impl<T> EventRegistration<T> {
     pub fn validate(&self) -> bool {
