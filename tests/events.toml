@@ -8,10 +8,8 @@ trim_output = true
 max_memory = { compile = 128, run = 64 }
 max_file_size = 8192
 
-[[events.on_score]]
-file = "./tests/on-score.js"
-[[events.on_complete]]
-file = "./tests/on-complete.ts"
+[integrations]
+events = ["./tests/on-score.js", "./tests/on-complete.ts"]
 
 [game]
 score = "points - 2*max(completed, attempts)"
