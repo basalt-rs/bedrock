@@ -19,7 +19,7 @@ serde = { version = "1.0.216", features = ["derive"] }
 strum = { version = "0.26.3", features = ["derive", "phf"] }
 thiserror = "2.0.11"
 time = "0.3.37"
-tokio = { version = "1.42.0", features = ["fs", "io-util", "rt"], optional = true }
+tokio = { version = "1.42.0", features = ["fs", "io-util"], optional = true }
 toml_edit = { version = "0.22.22", features = ["serde"] }
 typst = "0.12.0"
 typst-kit = { version = "0.12.0", features = ["embed-fonts"] }
