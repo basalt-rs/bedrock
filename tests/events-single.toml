@@ -1,0 +1,106 @@
+# Adapted from https://www.uiltexas.org/files/academics/Mitra_CompSci_District_2018_Programming_Packet.pdf
+port = 8517
+web_client = true
+
+[test_runner]
+timeout_ms = 60_000
+trim_output = true
+max_memory = { compile = 128, run = 64 }
+max_file_size = 8192
+
+[integrations]
+events = "./tests/on-score.js"
+
+[game]
+score = "points - 2*max(completed, attempts)"
+
+[languages]
+python3 = "latest"
+java = "21"
+
+[[accounts.hosts]]
+name = "host"
+password = "pwd1"
+
+[[accounts.competitors]]
+name = "team1"
+password = "pwd1"
+
+[[accounts.competitors]]
+name = "team2"
+password = "pwd1"
+
+# Specify information about the packet itself
+[packet]
+title = "UIL Computer Science Competition District 2018 Programming Problem Set"
+preamble = '''
+**Note: This is adapted from <https://www.uiltexas.org/files/academics/Mitra_CompSci_District_2018_Programming_Packet.pdf>**
+
+# General Notes
+
+1. Do the problems in any order you like. They do not have to be done in order from 1 to 12.
+2. All problems have a value of 60 points.
+3. There is no extraneous input. All input is exactly as specified in the problem. Unless specified by the problem, integer inputs will not have leading zeros. Unless otherwise specified, your program should read to the end of file.
+4. Your program should not print extraneous output. Follow the form exactly as given in the problem.
+5. A penalty of 5 points will be assessed each time that an incorrect solution is submitted. This penalty will only be assessed if a solution is ultimately judged as correct.
+
+# Names of Problems
+
+ | Number         | Name     |
+ | -------------- | -------- |
+ | Problem 1      | Alice    |
+ | Problem 2      | Bayani   |
+ | Problem 3      | Candela  |
+ | Problem 4      | Carla    |
+ | Problem 5      | Diya     |
+ | ~~Problem 6~~  | ~~Gleb~~ |
+ | Problem 7      | Jeremy   |
+ | Problem 8      | Kinga    |
+ | Problem 9      | Layla    |
+ | Problem 10     | Max      |
+ | Problem 11     | Nandita  |
+ | Problem 12     | Raymond  |
+
+'''
+
+[[packet.problems]]
+points = 10
+# import = "./problem1.toml"
+title = "Alice"
+description = '''
+Alice is waving to you from her sailboat! Write a program to output this image, exactly as you see it.
+
+**Input:** None
+**Output:** A picture of Alice in her sailboat, having fun out on the water.
+'''
+
+[[packet.problems.tests]]
+input = ""
+output = '''
+            &
+            &&
+            &&&
+            &&-&
+            &&--&
+            &&---&
+            &&----&
+            &&--.--&
+            &&--..--&
+            &&--...--&
+            &&--....--&
+            &&--.....--&
+            &&--......--&
+            &&--.......--&
+            &&--........--&
+            &&--.........--&
+            &&--..........--&
+            &&--...........--&
+            &&--............--&
+            &&--.............--&
+            || \o/
+            ||  |
+ ======================================
+   ==================================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+'''
+visible = true
