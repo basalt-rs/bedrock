@@ -142,6 +142,7 @@ dependencies = [
  "typst-kit",
  "typst-pdf",
  "typst-svg",
+ "url",
 ]
 
 [[package]]

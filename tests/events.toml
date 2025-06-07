@@ -9,7 +9,8 @@ max_memory = { compile = 128, run = 64 }
 max_file_size = 8192
 
 [integrations]
-events = ["./tests/on-score.js", "./tests/on-complete.ts"]
+event_handlers = ["./tests/on-score.js", "./tests/on-complete.ts"]
+webhooks = ["http://localhost:9090", "http://localhost:8090"]
 
 [game]
 score = "points - 2*max(completed, attempts)"
