@@ -11,7 +11,9 @@ use url::Url;
 pub struct Integrations {
     /// Paths to files that will be executed on server events
     #[serde_as(as = "OneOrMany<_>")]
-    pub events: Vec<PathBuf>,
-    #[serde(default)]
+    #[serde(default, alias = "event_handler")]
+    pub event_handlers: Vec<PathBuf>,
+    #[serde_as(as = "OneOrMany<_>")]
+    #[serde(default, alias = "webhook")]
     pub webhooks: Vec<Url>,
 }
