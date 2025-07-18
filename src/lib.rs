@@ -250,7 +250,6 @@ pub struct TestRunner {
     /// Measured in milliseconds
     ///
     /// [Default: 10 seconds]
-    #[serde(rename = "timeout")] // renamed so unit is obvious
     #[serde(
         with = "custom_serde::duration",
         default = "TestRunner::default_timeout"
