@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     hash::{DefaultHasher, Hasher},
     io::Read,
     path::PathBuf,
@@ -328,6 +329,17 @@ impl ConfigReadError {
     }
 }
 
+#[derive(Debug, thiserror::Error, Diagnostic)]
+pub enum ConfigValidationError {
+    #[error("Unknown language for problem: '{}' at problem '{}'", .language, .problem)]
+    UnknownProblemLanguage { language: String, problem: String },
+    #[error("Unknown language used in template override: '{}'{}", .language, .problem.as_ref().map(|p| format!(" at problem '{}'", p)).unwrap_or(String::new()))]
+    UnknownTemplateLanguage {
+        language: String,
+        problem: Option<String>,
+    },
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
@@ -352,6 +364,8 @@ pub struct Config {
     pub max_submissions: Option<std::num::NonZero<u32>>,
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,
+    /// List of templates and overrides for the languages
+    pub templates: RawOrImport<HashMap<String, String>>,
     /// Accounts that will be granted access to the server
     pub accounts: RawOrImport<Accounts>,
     /// The packet for this competition
@@ -623,6 +637,59 @@ impl Config {
         let vec = self.render_login_pdf(template)?;
         writer.write_all(&vec)
     }
+
+    /// Confirm that a config is valid.
+    ///
+    /// This function currently checks the following properties:
+    ///
+    /// - All template overrides are set only for languages which are enabled
+    /// - All problem template overrides are set only for languages which are enabled
+    /// - All problem language overrides only contain languages which are enabled
+    pub fn validate(&self) -> Result<(), ConfigValidationError> {
+        for key in self.templates.keys() {
+            if self.languages.get_by_str(key).is_none() {
+                return Err(ConfigValidationError::UnknownTemplateLanguage {
+                    language: key.to_string(),
+                    problem: None,
+                });
+            }
+        }
+
+        for problem in &self.packet.problems {
+            for key in problem.templates.iter().flat_map(|t| t.keys()) {
+                if self.languages.get_by_str(key).is_none() {
+                    return Err(ConfigValidationError::UnknownTemplateLanguage {
+                        language: key.to_string(),
+                        problem: Some(problem.title.clone()),
+                    });
+                }
+            }
+
+            for l in problem.languages.iter().flat_map(|t| t.iter()) {
+                if self.languages.get_by_str(l).is_none() {
+                    return Err(ConfigValidationError::UnknownProblemLanguage {
+                        language: l.to_string(),
+                        problem: problem.title.clone(),
+                    });
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    pub fn template(&self, language: &str, problem_index: usize) -> Option<&str> {
+        // get template from problem, if set
+        // otherwise, get it from the global templates
+        self.packet
+            .problems
+            .get(problem_index)?
+            .templates
+            .as_ref()
+            .and_then(|t| t.get(language))
+            .or_else(|| self.templates.get(language))
+            .map(String::as_str)
+    }
 }
 
 impl Default for Config {
@@ -635,6 +702,7 @@ impl Default for Config {
             game: Default::default(),
             max_submissions: None,
             languages: Default::default(),
+            templates: Default::default(),
             accounts: Default::default(),
             packet: Default::default(),
             test_runner: Default::default(),

@@ -1,4 +1,7 @@
-use std::collections::BTreeSet;
+use std::{
+    collections::{BTreeSet, HashMap},
+    hash::Hash,
+};
 
 use serde::{Deserialize, Serialize};
 
@@ -8,7 +11,7 @@ use crate::{
 };
 
 /// Structure represnting data for a problem
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default)]
 #[serde(deny_unknown_fields)]
 pub struct Problem {
     /// The languages that may be used to solve this question
@@ -22,6 +25,23 @@ pub struct Problem {
     /// The tests that will be used on this problem
     pub tests: Vec<Test>,
     pub points: Option<i32>,
+    pub templates: Option<HashMap<String, String>>,
+}
+
+impl Hash for Problem {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.languages.hash(state);
+        self.title.hash(state);
+        self.description.hash(state);
+        self.tests.hash(state);
+        self.points.hash(state);
+        // HashMap doesn't implement hash
+        if let Some(templates) = &self.templates {
+            for (name, template) in templates {
+                (name, template).hash(state);
+            }
+        }
+    }
 }
 
 impl Problem {

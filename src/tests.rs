@@ -42,6 +42,7 @@ fn packet_files_parse_correctly() -> Result<()> {
             run: "./out".into(),
             source_file: "solution.ml".into(),
             syntax: Syntax::Ocaml,
+            template: None,
         }),
         config.languages.get_by_str("ocaml")
     );
@@ -54,6 +55,7 @@ fn packet_files_parse_correctly() -> Result<()> {
             run: "./solution".into(),
             source_file: "solution.hs".into(),
             syntax: Syntax::Haskell,
+            template: None,
         }),
         config.languages.get_by_str("haskell")
     );

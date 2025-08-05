@@ -101,6 +101,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     run,
                     source_file,
                     syntax,
+                    template,
                 } => Language::Custom {
                     name: name.unwrap_or_else(|| key.clone()).into_owned(),
                     raw_name: key.clone().into_owned(),
@@ -110,6 +111,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                         .or_else(|| Syntax::from_string::<M::Error>(key).ok())
                         .unwrap_or_default(),
                     source_file: source_file.into_owned(),
+                    template: template.map(Cow::into_owned),
                 },
             };
 
@@ -150,6 +152,7 @@ impl Serialize for LanguageSet {
                     run,
                     source_file,
                     syntax,
+                    template,
                 } => {
                     map.serialize_entry(
                         raw_name,
@@ -159,6 +162,7 @@ impl Serialize for LanguageSet {
                             run: run.into(),
                             source_file: source_file.into(),
                             syntax: Some(*syntax),
+                            template: template.as_ref().map(Into::into),
                         },
                     )?;
                 }
@@ -184,6 +188,7 @@ enum TomlLanguage<'a> {
         run: Cow<'a, str>,
         source_file: Cow<'a, str>,
         syntax: Option<Syntax>,
+        template: Option<Cow<'a, str>>,
     },
 }
 

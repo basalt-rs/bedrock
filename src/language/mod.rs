@@ -3,6 +3,7 @@ use std::str::FromStr;
 
 pub use language_set::LanguageSet;
 
+use indoc::indoc;
 use phf::{phf_map, phf_ordered_map};
 use serde::{Deserialize, Serialize};
 use strum::VariantNames;
@@ -19,6 +20,7 @@ struct Builtin {
     source_file: &'static str,
     syntax: Syntax,
     versions: phf::OrderedMap<&'static str, LanguageVersion>,
+    template: &'static str,
 }
 
 // TODO: enforce minimum version count of 1 at compile time
@@ -35,6 +37,10 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
                 init_command: None,
             }
         },
+        template: indoc!(r#"
+        num = int(input())
+        print(num)
+        "#),
     },
     "java" => Builtin {
         builtin: BuiltInLanguage::Java,
@@ -60,6 +66,18 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
                 init_command: None,
             },
         },
+        template: indoc!(r#"
+        import java.util.Scanner;
+
+        public class Solution {
+            public static void main(String[] args) {
+                Scanner scanner = new Scanner(System.in);
+
+                int num = scanner.nextInt();
+                System.out.println(num);
+            }
+        }
+        "#),
     },
     "javascript" => Builtin {
         builtin: BuiltInLanguage::JavaScript,
@@ -68,11 +86,19 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
         versions: phf_ordered_map! {
             "latest" => LanguageVersion {
                 build: None,
-                run: "nodejs solution.js",
-                install_command: Some("dnf install nodejs20 -y"),
+                run: "deno run -A solution.js",
+                install_command: Some(indoc!(r#"
+                deno_install_path=$(mktemp)
+                curl -o "$deno_install_path" -fsSL https://deno.land/x/install/install.sh
+                sh "$deno_install_path" -y
+                "#)),
                 init_command: None,
             }
         },
+        template: indoc!(r#"
+        const num = parseInt(prompt(''));
+        console.log(num);
+        "#),
     },
     "rust" => Builtin {
         builtin: BuiltInLanguage::Rust,
@@ -86,10 +112,24 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
                 init_command: None,
             }
         },
+        template: indoc!(r#"
+        fn main() {
+            let num: i32 = std::io::stdin()
+                .lines()
+                .next()
+                .unwrap()
+                .unwrap()
+                .parse()
+                .unwrap();
+            println!("{}", num);
+        }
+        "#),
     },
 };
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, VariantNames)]
+#[derive(
+    Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, VariantNames,
+)]
 #[strum(serialize_all = "lowercase")]
 pub enum BuiltInLanguage {
     Python3,
@@ -196,6 +236,10 @@ impl BuiltInLanguage {
     pub fn syntax(self) -> Syntax {
         BUILTINS[self.as_str()].syntax
     }
+
+    pub fn template(self) -> &'static str {
+        BUILTINS[self.as_str()].template
+    }
 }
 
 impl From<&str> for BuiltInLanguage {
@@ -291,6 +335,7 @@ pub enum Language {
         run: String,
         source_file: String,
         syntax: Syntax,
+        template: Option<String>,
     },
 }
 
@@ -348,6 +393,13 @@ impl Language {
         match self {
             Language::BuiltIn { language, .. } => language.syntax(),
             Language::Custom { syntax, .. } => *syntax,
+        }
+    }
+
+    pub fn template(&self) -> &str {
+        match self {
+            Language::BuiltIn { language, .. } => language.template(),
+            Language::Custom { template, .. } => template.as_deref().unwrap_or(""),
         }
     }
 }
