@@ -28,6 +28,17 @@ impl LanguageSet {
     }
 }
 
+impl<A> FromIterator<A> for LanguageSet
+where
+    A: Into<Language>,
+{
+    fn from_iter<T: IntoIterator<Item = A>>(iter: T) -> Self {
+        Self {
+            inner: iter.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 impl Deref for LanguageSet {
     type Target = BTreeSet<Language>;
 

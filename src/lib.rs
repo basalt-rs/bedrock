@@ -329,7 +329,7 @@ impl ConfigReadError {
     }
 }
 
-#[derive(Debug, thiserror::Error, Diagnostic)]
+#[derive(Debug, thiserror::Error, Diagnostic, PartialEq, Eq)]
 pub enum ConfigValidationError {
     #[error("Unknown language for problem: '{}' at problem '{}'", .language, .problem)]
     UnknownProblemLanguage { language: String, problem: String },

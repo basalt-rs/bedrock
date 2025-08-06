@@ -1,0 +1,77 @@
+port: 80
+
+setup: (
+    // import = "./setup.toml"
+
+    // install = { import = "./install.sh" }
+    install: r"
+    dnf install opam
+    ",
+
+    // init = { import = "./init.sh" }
+    init: r"
+    opam init -y
+    eval $(opam env)
+    ",
+)
+
+test_runner: (
+    // import = "./test-runner.toml"
+    timeout_ms: 60_000,
+    trim_output: true,
+    max_memory: (compile: 128, run: 64),
+    max_file_size: 8192,
+)
+
+languages: (
+    python3: "latest",
+    java: "21",
+    ocaml: (build: "ocamlc -o out solution.ml", run: "./out", source_file: "solution.ml"),
+    haskell: (build: "ghc solution.hs", run: "./solution", source_file: "solution.hs", syntax: "haskell")
+)
+
+accounts: (
+    hosts: [
+        (name: "Teacher", password: "abc123"),
+    ]
+    hosts: [
+        (name: "StudentOne", password: "123abc"),
+        (name: "StudentTwo", password: "deadbeef"),
+    ]
+)
+
+// Specify information about the packet itself
+packet: (
+    // import = "./packet.toml"
+    title: "Example Packet",
+    preamble: r"
+    This packet includes problems of a difficulty *vastly*
+    surpassing the capabilities of the average computer
+    science student. Be wary as these problems will
+    certainly give you great intellectual trouble. There
+    is little hope for anyone without a Ph.D in computer
+    science.
+
+    If you decide to attempt these problems anyways, good
+    luck. You will be rewarded for swiftness in your answers.
+    ",
+
+    problems: [
+        (
+            title: "Reversing a string",
+            description: r#"
+            Reversing a string is one of the most *basic* algorithmic
+            problems for a beginner computer science student to solve.
+
+            Solve it.
+            "#,
+            tests: [
+                (input: "hello", output: "olleh", visible: true),
+                (input: "world", output: "dlrow", visible: true),
+                (input: "", output: ""),
+                (input: "aa", output: "aa"),
+                (input: "racecar", output: "racecar"),
+            ]
+        )
+    ]
+)
