@@ -142,7 +142,7 @@ pub struct PointsSettings {
     pub score: String,
     #[serde(default = "default_points")]
     pub question_point_value: i32,
-    #[serde(default = "default_time_limit")]
+    #[serde(default = "default_time_limit", with = "custom_serde::duration")]
     pub time_limit: Duration,
 }
 
@@ -169,6 +169,7 @@ pub enum RaceMode {
 pub struct RaceSettings {
     pub race: RaceMode,
     pub arcade: bool,
+    #[serde(with = "custom_serde::option_duration")]
     pub time_limit: Option<Duration>,
 }
 
@@ -249,7 +250,6 @@ pub struct TestRunner {
     /// Measured in milliseconds
     ///
     /// [Default: 10 seconds]
-    #[serde(rename = "timeout_ms")] // renamed so unit is obvious
     #[serde(
         with = "custom_serde::duration",
         default = "TestRunner::default_timeout"
