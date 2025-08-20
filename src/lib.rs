@@ -21,6 +21,7 @@ pub mod packet;
 pub mod render;
 pub mod roi;
 pub mod scoring;
+pub mod templates;
 
 mod util;
 
@@ -365,7 +366,7 @@ pub struct Config {
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,
     /// List of templates and overrides for the languages
-    pub templates: RawOrImport<HashMap<String, String>>,
+    pub templates: Option<RawOrImport<HashMap<String, String>>>,
     /// Accounts that will be granted access to the server
     pub accounts: RawOrImport<Accounts>,
     /// The packet for this competition
@@ -646,12 +647,14 @@ impl Config {
     /// - All problem template overrides are set only for languages which are enabled
     /// - All problem language overrides only contain languages which are enabled
     pub fn validate(&self) -> Result<(), ConfigValidationError> {
-        for key in self.templates.keys() {
-            if self.languages.get_by_str(key).is_none() {
-                return Err(ConfigValidationError::UnknownTemplateLanguage {
-                    language: key.to_string(),
-                    problem: None,
-                });
+        if let Some(ref templates) = self.templates {
+            for key in templates.keys() {
+                if self.languages.get_by_str(key).is_none() {
+                    return Err(ConfigValidationError::UnknownTemplateLanguage {
+                        language: key.to_string(),
+                        problem: None,
+                    });
+                }
             }
         }
 
@@ -687,7 +690,7 @@ impl Config {
             .templates
             .as_ref()
             .and_then(|t| t.get(language))
-            .or_else(|| self.templates.get(language))
+            .or_else(|| self.templates.as_ref().and_then(|t| t.get(language)))
             .map(String::as_str)
     }
 }
