@@ -100,7 +100,7 @@ pub enum BuiltInLanguage {
 
 impl BuiltInLanguage {
     pub fn has_version(self, version: &Version) -> Result<(), Vec<&str>> {
-        let bil = &BUILTINS[self.as_str()];
+        let bil = &BUILTINS[self.name()];
         match version {
             Version::Latest => Ok(()),
             Version::Specific(v) => {
@@ -121,7 +121,7 @@ impl BuiltInLanguage {
             .join(", ")
     }
 
-    pub const fn as_str(self) -> &'static str {
+    pub const fn name(self) -> &'static str {
         match self {
             Self::Python3 => "python3",
             Self::Java => "java",
@@ -130,7 +130,7 @@ impl BuiltInLanguage {
         }
     }
 
-    pub const fn name(self) -> &'static str {
+    pub const fn display_name(self) -> &'static str {
         match self {
             Self::Python3 => "Python3",
             Self::Java => "Java",
@@ -140,11 +140,11 @@ impl BuiltInLanguage {
     }
 
     pub fn source_file(self) -> &'static str {
-        BUILTINS[self.as_str()].source_file
+        BUILTINS[self.name()].source_file
     }
 
     pub fn build_command(self, version: &Version) -> Option<&str> {
-        let bil = &BUILTINS[self.as_str()];
+        let bil = &BUILTINS[self.name()];
         match version {
             Version::Latest => bil.versions.values().last()?.build,
             Version::Specific(v) => bil.versions[v].build,
@@ -152,7 +152,7 @@ impl BuiltInLanguage {
     }
 
     pub fn run_command(self, version: &Version) -> &str {
-        let bil = &BUILTINS[self.as_str()];
+        let bil = &BUILTINS[self.name()];
         match version {
             Version::Latest => {
                 bil.versions
@@ -166,7 +166,7 @@ impl BuiltInLanguage {
     }
 
     pub fn install_command(self, version: &Version) -> Option<&str> {
-        let bil = &BUILTINS[self.as_str()];
+        let bil = &BUILTINS[self.name()];
         match version {
             Version::Latest => {
                 bil.versions
@@ -180,7 +180,7 @@ impl BuiltInLanguage {
     }
 
     pub fn init_command(self, version: &Version) -> Option<&str> {
-        let bil = &BUILTINS[self.as_str()];
+        let bil = &BUILTINS[self.name()];
         match version {
             Version::Latest => {
                 bil.versions
@@ -194,7 +194,7 @@ impl BuiltInLanguage {
     }
 
     pub fn syntax(self) -> Syntax {
-        BUILTINS[self.as_str()].syntax
+        BUILTINS[self.name()].syntax
     }
 }
 
@@ -285,8 +285,8 @@ pub enum Language {
         version: Version,
     },
     Custom {
-        raw_name: String,
         name: String,
+        display_name: String,
         build: Option<String>,
         run: String,
         source_file: String,
@@ -295,17 +295,17 @@ pub enum Language {
 }
 
 impl Language {
-    pub fn raw_name(&self) -> &str {
-        match self {
-            Language::BuiltIn { language, .. } => language.as_str(),
-            Language::Custom { raw_name, .. } => raw_name,
-        }
-    }
-
     pub fn name(&self) -> &str {
         match self {
             Language::BuiltIn { language, .. } => language.name(),
             Language::Custom { name, .. } => name,
+        }
+    }
+
+    pub fn display_name(&self) -> &str {
+        match self {
+            Language::BuiltIn { language, .. } => language.display_name(),
+            Language::Custom { display_name, .. } => display_name,
         }
     }
 
