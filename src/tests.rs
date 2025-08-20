@@ -36,8 +36,8 @@ fn packet_files_parse_correctly() -> Result<()> {
 
     assert_eq!(
         Some(&Language::Custom {
-            raw_name: "ocaml".into(),
             name: "ocaml".into(),
+            display_name: "ocaml".into(),
             build: Some("ocamlc -o out solution.ml".into()),
             run: "./out".into(),
             source_file: "solution.ml".into(),
@@ -48,8 +48,8 @@ fn packet_files_parse_correctly() -> Result<()> {
 
     assert_eq!(
         Some(&Language::Custom {
-            raw_name: "haskell".into(),
             name: "haskell".into(),
+            display_name: "haskell".into(),
             build: Some("ghc solution.hs".into()),
             run: "./solution".into(),
             source_file: "solution.hs".into(),
