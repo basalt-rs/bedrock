@@ -24,7 +24,7 @@ impl LanguageSet {
     }
 
     pub fn get_by_str(&self, raw_name: &str) -> Option<&Language> {
-        self.inner.iter().find(|l| l.raw_name() == raw_name)
+        self.inner.iter().find(|l| l.name() == raw_name)
     }
 }
 
@@ -96,14 +96,14 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     Language::BuiltIn { language, version }
                 }
                 TomlLanguage::Custom {
-                    name,
+                    display_name,
                     build,
                     run,
                     source_file,
                     syntax,
                 } => Language::Custom {
-                    name: name.unwrap_or_else(|| key.clone()).into_owned(),
-                    raw_name: key.clone().into_owned(),
+                    name: key.clone().into_owned(),
+                    display_name: display_name.unwrap_or_else(|| key.clone()).into_owned(),
                     build: build.map(Cow::into_owned),
                     run: run.into_owned(),
                     syntax: syntax
@@ -141,20 +141,20 @@ impl Serialize for LanguageSet {
                     language: name,
                     version: value,
                 } => {
-                    map.serialize_entry(name.as_str(), &TomlLanguage::from(value))?;
+                    map.serialize_entry(name.name(), &TomlLanguage::from(value))?;
                 }
                 Language::Custom {
-                    raw_name,
                     name,
+                    display_name,
                     build,
                     run,
                     source_file,
                     syntax,
                 } => {
                     map.serialize_entry(
-                        raw_name,
+                        name,
                         &TomlLanguage::Custom {
-                            name: Some(name.into()),
+                            display_name: Some(display_name.into()),
                             build: build.as_ref().map(Into::into),
                             run: run.into(),
                             source_file: source_file.into(),
@@ -178,8 +178,8 @@ enum TomlLanguage<'a> {
     Version(Cow<'a, str>),
     #[serde(untagged)]
     Custom {
-        // TODO: Custom command deserialiser
-        name: Option<Cow<'a, str>>,
+        #[serde(alias = "name")]
+        display_name: Option<Cow<'a, str>>,
         build: Option<Cow<'a, str>>,
         run: Cow<'a, str>,
         source_file: Cow<'a, str>,
