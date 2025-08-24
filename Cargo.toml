@@ -2,6 +2,7 @@
 name = "bedrock"
 version = "1.0.0"
 edition = "2021"
+rust-version = "1.82"
 
 [features]
 dev = [] # Make it so we don't have recompile when the template.typ is changed
