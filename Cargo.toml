@@ -9,7 +9,7 @@ repository = "https://github.com/basalt-rs/bedrock"
 license = "Apache-2.0"
 keywords = ["basalt", "packet", "competition", "configuration", "pdf"]
 categories = ["config"]
-exclude = [".*"]
+exclude = [".github"]
 
 [features]
 dev = [] # Make it so we don't have recompile when the template.typ is changed
