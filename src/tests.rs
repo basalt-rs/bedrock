@@ -38,6 +38,7 @@ fn packet_files_parse_correctly() -> Result<()> {
         Some(&Language::Custom {
             name: "ocaml".into(),
             display_name: "ocaml".into(),
+            workspace: None,
             build: Some("ocamlc -o out solution.ml".into()),
             run: "./out".into(),
             source_file: "solution.ml".into(),
@@ -50,12 +51,26 @@ fn packet_files_parse_correctly() -> Result<()> {
         Some(&Language::Custom {
             name: "haskell".into(),
             display_name: "haskell".into(),
+            workspace: None,
             build: Some("ghc solution.hs".into()),
             run: "./solution".into(),
             source_file: "solution.hs".into(),
             syntax: Syntax::Haskell,
         }),
         config.languages.get_by_str("haskell")
+    );
+
+    assert_eq!(
+        Some(&Language::Custom {
+            name: "gleam".into(),
+            display_name: "gleam".into(),
+            workspace: Some("gleam_env".into()),
+            build: Some("gleam build".into()),
+            run: "gleam run".into(),
+            source_file: "src/main.gleam".into(),
+            syntax: Syntax::Elixir,
+        }),
+        config.languages.get_by_str("gleam")
     );
 
     dbg!(config.hash());

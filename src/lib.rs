@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeMap,
     hash::{DefaultHasher, Hasher},
     io::Read,
     path::PathBuf,
@@ -13,6 +14,8 @@ use roi::RawOrImport;
 use serde::{Deserialize, Serialize};
 use typst::foundations::{Array, Dict, IntoValue, Str, Value};
 
+use crate::workspaces::Workspace;
+
 mod custom_serde;
 pub mod integrations;
 pub mod language;
@@ -20,6 +23,7 @@ pub mod packet;
 pub mod render;
 pub mod roi;
 pub mod scoring;
+pub mod workspaces;
 
 mod util;
 
@@ -350,6 +354,9 @@ pub struct Config {
     pub integrations: Integrations,
     /// Maximum number of attempts that a user is allowed to make for a given problem
     pub max_submissions: Option<std::num::NonZero<u32>>,
+    /// Map of workspaces that function as reusable execution environments
+    #[serde(default)]
+    pub workspaces: RawOrImport<BTreeMap<String, Workspace>>,
     /// List of languages available for the server
     pub languages: RawOrImport<LanguageSet>,
     /// Accounts that will be granted access to the server
@@ -635,6 +642,7 @@ impl Default for Config {
             game: Default::default(),
             max_submissions: None,
             languages: Default::default(),
+            workspaces: Default::default(),
             accounts: Default::default(),
             packet: Default::default(),
             test_runner: Default::default(),

@@ -99,6 +99,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     display_name,
                     build,
                     run,
+                    workspace,
                     source_file,
                     syntax,
                 } => Language::Custom {
@@ -106,6 +107,7 @@ impl<'de> Visitor<'de> for LanguageMapVisitor {
                     display_name: display_name.unwrap_or_else(|| key.clone()).into_owned(),
                     build: build.map(Cow::into_owned),
                     run: run.into_owned(),
+                    workspace: workspace.map(Cow::into_owned),
                     syntax: syntax
                         .or_else(|| Syntax::from_string::<M::Error>(key).ok())
                         .unwrap_or_default(),
@@ -147,6 +149,7 @@ impl Serialize for LanguageSet {
                     name,
                     display_name,
                     build,
+                    workspace,
                     run,
                     source_file,
                     syntax,
@@ -157,6 +160,7 @@ impl Serialize for LanguageSet {
                             display_name: Some(display_name.into()),
                             build: build.as_ref().map(Into::into),
                             run: run.into(),
+                            workspace: workspace.as_ref().map(Cow::from),
                             source_file: source_file.into(),
                             syntax: Some(*syntax),
                         },
@@ -182,6 +186,7 @@ enum TomlLanguage<'a> {
         display_name: Option<Cow<'a, str>>,
         build: Option<Cow<'a, str>>,
         run: Cow<'a, str>,
+        workspace: Option<Cow<'a, str>>,
         source_file: Cow<'a, str>,
         syntax: Option<Syntax>,
     },
