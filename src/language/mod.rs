@@ -71,7 +71,31 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
                 run: "nodejs solution.js",
                 install_command: Some("dnf install nodejs20 -y"),
                 init_command: None,
-            }
+            },
+            "node:latest" => LanguageVersion {
+                build: None,
+                run: "nodejs solution.js",
+                install_command: Some("dnf install nodejs20 -y"),
+                init_command: None,
+            },
+            "node:20" => LanguageVersion {
+                build: None,
+                run: "nodejs solution.js",
+                install_command: Some("dnf install nodejs20 -y"),
+                init_command: None,
+            },
+            "deno:latest" => LanguageVersion {
+                build: None,
+                run: "deno run --no-prompt solution.js",
+                install_command: Some("curl -fsSL https://deno.land/install.sh | sh"),
+                init_command: None,
+            },
+            "bun:latest" => LanguageVersion {
+                build: None,
+                run: "bun run solution.js",
+                install_command: Some("curl -fsSL https://bun.sh/install | bash"),
+                init_command: None,
+            },
         },
     },
     "rust" => Builtin {
