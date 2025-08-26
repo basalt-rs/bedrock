@@ -86,7 +86,7 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             },
             "deno:latest" => LanguageVersion {
                 build: None,
-                run: "deno run --no-prompt solution.js",
+                run: "deno run -A solution.js",
                 install_command: Some("curl -fsSL https://deno.land/install.sh | sh"),
                 init_command: None,
             },
