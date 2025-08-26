@@ -1,6 +1,6 @@
 //! This is not really an example, mainly just testing to see how typst generates its output
 
-use bedrock::render::typst::TypstWrapperWorld;
+use basalt_bedrock::render::typst::TypstWrapperWorld;
 
 fn main() {
     let welt = TypstWrapperWorld::new(include_str!("../data/template.typ"));
