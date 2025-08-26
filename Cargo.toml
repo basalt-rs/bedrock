@@ -1,8 +1,15 @@
 [package]
-name = "bedrock"
+name = "basalt-bedrock"
+description = "Definitions for Basalt competition packets"
 version = "1.0.0"
 edition = "2021"
 rust-version = "1.82"
+authors = ["Jack Branch", "funnyboy-roks <funnyboyroks@gmail.com>"]
+repository = "https://github.com/basalt-rs/bedrock"
+license = "Apache-2.0"
+keywords = ["basalt", "packet", "competition", "configuration", "pdf"]
+categories = ["config"]
+exclude = [".github"]
 
 [features]
 dev = [] # Make it so we don't have recompile when the template.typ is changed
@@ -28,7 +35,7 @@ typst-pdf = "0.12.0"
 typst-svg = "0.12.0"
 ecow = "0.2.6"
 syntect = { version = "5.2.0", default-features = false, features = [
-  "default-fancy",
+    "default-fancy",
 ] }
 evalexpr = { version = "12.0.2", features = ["serde"] }
 serde_with = "3.14.0"
@@ -36,5 +43,5 @@ url = { version = "2.5.7", features = ["serde"] }
 humantime = "2.2.0"
 
 [dev-dependencies]
-bedrock = { path = ".", features = ["tokio"] }
+basalt-bedrock = { path = ".", features = ["tokio"] }
 tokio = { version = "1.47.1", features = ["full"] }

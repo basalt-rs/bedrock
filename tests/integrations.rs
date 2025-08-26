@@ -1,4 +1,4 @@
-use bedrock::Config;
+use basalt_bedrock::Config;
 
 const FILE: &str = include_str!("./events.toml");
 const FILE_SINGLE: &str = include_str!("./events-single.toml");

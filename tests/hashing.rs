@@ -1,9 +1,9 @@
-use bedrock::Config;
+use basalt_bedrock::Config;
 
 /// Test that the hash does not change between executions of the application
 #[test]
 fn hash_consistent() {
-    let a = bedrock::Config {
+    let a = Config {
         setup: None,
         port: 69,
         web_client: true,
@@ -21,7 +21,7 @@ fn hash_consistent() {
 
 #[test]
 fn port_diff() {
-    let a = bedrock::Config {
+    let a = Config {
         setup: None,
         port: 69,
         web_client: true,
@@ -34,7 +34,7 @@ fn port_diff() {
         test_runner: Default::default(),
     };
 
-    let b = bedrock::Config {
+    let b = Config {
         setup: None,
         port: 420,
         web_client: true,
