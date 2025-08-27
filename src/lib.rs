@@ -432,7 +432,7 @@ impl Config {
     /// Generate a hash string for this config
     ///
     /// ```
-    /// # use bedrock::Config;
+    /// # use basalt_bedrock::Config;
     /// # let config = Config::default();
     /// let hash = format!("Your hash is: {}", config.hash());
     /// ```

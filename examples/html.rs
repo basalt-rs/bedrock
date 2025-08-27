@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use bedrock::render::markdown::MarkdownRenderable;
+use basalt_bedrock::render::markdown::MarkdownRenderable;
 use syntect::html::{css_for_theme_with_class_style, ClassStyle};
 
 fn main() -> Result<(), Box<dyn Error>> {

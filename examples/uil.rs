@@ -8,7 +8,7 @@ async fn main() -> io::Result<()> {
     #[cfg(not(feature = "dev"))]
     let config = include_str!("./uil.toml");
 
-    let x = bedrock::Config::from_str(config, Some("one.toml")).unwrap();
+    let x = basalt_bedrock::Config::from_str(config, Some("one.toml")).unwrap();
 
     let mut out = std::fs::File::create("uil.pdf").unwrap();
 
