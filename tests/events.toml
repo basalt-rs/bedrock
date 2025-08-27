@@ -12,6 +12,18 @@ max_file_size = 8192
 event_handlers = ["./tests/on-score.js", "./tests/on-complete.ts"]
 webhooks = ["http://localhost:9090", "http://localhost:8090"]
 
+[workspaces]
+gleam-env = { setup = "yes | gleam new ." }
+
+# A more complex workspace with a base, gleam project, and dependencies
+[workspaces.gleam-env-two]
+from = "./some_dir" # some directory to act as base (perhaps you want some files pre-included)
+setup = '''
+yes | gleam new .
+gleam add dateformat@1
+gleam add birl
+'''
+
 [game]
 score = "points - 2*max(completed, attempts)"
 

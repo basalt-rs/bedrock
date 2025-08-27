@@ -22,11 +22,26 @@ trim_output = true
 max_memory = { compile = 128, run = 64 }
 max_file_size = 8192
 
+[workspaces.gleam_env]
+# from = "./some_dir"
+setup = '''
+yes | gleam new .
+gleam add dateformat@1
+gleam add birl
+'''
+
 [languages]
 python3 = "latest"
 java = "21"
 ocaml = { build = "ocamlc -o out solution.ml", run = "./out", source_file = "solution.ml" }
 haskell = { build = "ghc solution.hs", run = "./solution", source_file = "solution.hs", syntax = "haskell" }
+
+[languages.gleam]
+build = "gleam build"
+run = "gleam run"
+workspace = "gleam_env"
+source_file = "src/main.gleam"
+syntax = "elixir"
 
 [[accounts.hosts]]
 name = "Teacher"
