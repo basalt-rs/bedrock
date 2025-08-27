@@ -1,4 +1,4 @@
-use bedrock::Config;
+use basalt_bedrock::Config;
 
 const FILE: &str = include_str!("./imports.toml");
 const SETUP_FILE: &str = include_str!("./setup.toml");
