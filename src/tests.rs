@@ -59,6 +59,13 @@ fn packet_files_parse_correctly() -> Result<()> {
         }),
         config.languages.get_by_str("haskell")
     );
+    assert_eq!(
+        Some(&Language::BuiltIn {
+            language: BuiltInLanguage::JavaScript,
+            version: Version::Specific("deno:latest".into())
+        }),
+        config.languages.get_by_str("javascript")
+    );
 
     assert_eq!(
         Some(&Language::Custom {
