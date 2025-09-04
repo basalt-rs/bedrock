@@ -35,6 +35,22 @@ fn packet_files_parse_correctly() -> Result<()> {
     );
 
     assert_eq!(
+        Some(&Language::BuiltIn {
+            language: BuiltInLanguage::Ruby,
+            version: Version::Latest
+        }),
+        config.languages.get_by_str("ruby")
+    );
+
+    assert_eq!(
+        Some(&Language::BuiltIn {
+            language: BuiltInLanguage::Go,
+            version: Version::Latest
+        }),
+        config.languages.get_by_str("go")
+    );
+
+    assert_eq!(
         Some(&Language::Custom {
             name: "ocaml".into(),
             display_name: "ocaml".into(),
