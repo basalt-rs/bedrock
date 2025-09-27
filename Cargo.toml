@@ -13,13 +13,13 @@ exclude = [".github"]
 
 [features]
 tokio = ["dep:tokio", "dep:tmpdir"]
-render = ["dep:tempfile", "serde_json"]
+typst = ["dep:tempfile", "serde_json"]
 default = ["typst"]
 
 [dependencies]
 miette = { version = "7.6.0", features = ["fancy"] }
 phf = { version = "0.11.3", features = ["macros"] }
-pulldown-cmark = "0.11.3"
+pulldown-cmark = "0.13.0"
 serde_json = { version = "1.0.143", optional = true }
 serde = { version = "1.0.219", features = ["derive"] }
 strum = { version = "0.26.3", features = ["derive", "phf"] }
@@ -34,6 +34,7 @@ evalexpr = { version = "12.0.2", features = ["serde"] }
 serde_with = "3.14.0"
 url = { version = "2.5.7", features = ["serde"] }
 humantime = "2.2.0"
+latex2mathml = "0.2.3"
 
 [dev-dependencies]
 basalt-bedrock = { path = ".", features = ["tokio", "typst"] }

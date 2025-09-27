@@ -4,7 +4,7 @@ use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 use serde::{Deserialize, Serialize};
 use syntect::{html::ClassStyle, parsing::SyntaxSet, util::LinesWithEndings};
 
-#[derive(thiserror::Error, Debug, PartialEq, Eq)]
+#[derive(thiserror::Error, Debug)]
 pub enum RenderError {
     #[error("HTML tags are unsupported in Markdown")]
     UnsupportedHtml,
@@ -69,11 +69,16 @@ impl MarkdownRenderable {
         let syntax_set = SyntaxSet::load_defaults_newlines();
         let parser = parser.flat_map(|event| -> Box<dyn Iterator<Item = Event>> {
             match event {
-                pulldown_cmark::Event::InlineMath(_) => {
-                    todo!("Inline maths in markdown");
+                pulldown_cmark::Event::InlineMath(s) => {
+                    let html =
+                        latex2mathml::latex_to_mathml(&s, latex2mathml::DisplayStyle::Inline)
+                            .unwrap();
+                    Box::new(std::iter::once(Event::Html(html.into())))
                 }
-                pulldown_cmark::Event::DisplayMath(_) => {
-                    todo!("Display maths in markdown");
+                pulldown_cmark::Event::DisplayMath(s) => {
+                    let html = latex2mathml::latex_to_mathml(&s, latex2mathml::DisplayStyle::Block)
+                        .unwrap();
+                    Box::new(std::iter::once(Event::Html(html.into())))
                 }
                 pulldown_cmark::Event::Start(Tag::CodeBlock(kind)) => {
                     let lang = match kind {
