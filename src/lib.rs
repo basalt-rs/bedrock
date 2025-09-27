@@ -421,7 +421,7 @@ impl Config {
 
     /// Render a PDF related to this configuration, using a provided
     /// template written in [typst](https://typst.app).
-    #[cfg(all(feature = "render", feature = "tokio"))]
+    #[cfg(feature = "render")]
     pub fn generate_pdf(
         &self,
         writer: &mut impl std::io::Write,

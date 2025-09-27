@@ -85,11 +85,9 @@ dependencies = [
  "evalexpr",
  "flate2",
  "humantime",
- "lazy_static",
  "miette",
  "phf 0.11.3",
  "pulldown-cmark",
- "pulldown-cmark-ast",
  "reqwest",
  "serde",
  "serde_json",
@@ -858,12 +856,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lazy_static"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
-
-[[package]]
 name = "libc"
 version = "0.2.175"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1269,15 +1261,6 @@ dependencies = [
  "memchr",
  "pulldown-cmark-escape",
  "unicase",
-]
-
-[[package]]
-name = "pulldown-cmark-ast"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6653b5ed48350ac75557c7af82d2c746a5fce5d85cae1afd8ab5f0dddd54ca8d"
-dependencies = [
- "pulldown-cmark",
 ]
 
 [[package]]

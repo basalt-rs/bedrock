@@ -1,5 +1,3 @@
-use std::path::{Path, PathBuf};
-
 /// Get the cmarker plugin for typst
 #[cfg(feature = "render")]
 fn fetch_typst_plugin(name: &str, version: &str, files: &[&str]) {
@@ -7,8 +5,11 @@ fn fetch_typst_plugin(name: &str, version: &str, files: &[&str]) {
     use reqwest::blocking as reqwest;
     use tar::Archive;
 
-    use std::fs::File;
-    use std::io::BufWriter;
+    use std::{
+        fs::File,
+        io::BufWriter,
+        path::{Path, PathBuf},
+    };
 
     let url = format!(
         "https://packages.typst.org/preview/{}-{}.tar.gz",
@@ -38,6 +39,7 @@ fn fetch_typst_plugin(name: &str, version: &str, files: &[&str]) {
     }
 }
 
+#[cfg(feature = "render")]
 macro_rules! add_typst_plugin {
     ($files: expr, $name: literal, $version: literal, [$($path: literal),+$(,)?]) => {
         fetch_typst_plugin($name, $version, &[$($path),+]);
@@ -50,6 +52,8 @@ fn main() {
     #[cfg(feature = "render")]
     {
         use std::io::Write;
+        use std::path::PathBuf;
+
         let mut files = Vec::new();
         add_typst_plugin!(files, "cmarker", "0.1.6", ["plugin.wasm", "lib.typ"]);
         add_typst_plugin!(
