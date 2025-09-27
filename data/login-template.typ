@@ -1,8 +1,17 @@
+#import "./cmarker/lib.typ" as cmarker
+#import "./mitex/lib.typ" as mitex
+
+#let config = json(sys.inputs.config)
+#let render(markdown) = cmarker.render(
+    markdown,
+    math: mitex,
+)
+
 // Page heading
 #set page(
   header: [
     #set text(style: "italic")
-    #title
+    #config.packet.title
     #block(line(length: 100%, stroke: 0.5pt), above: 0.6em)
   ]
 )
@@ -26,7 +35,7 @@
         row-gutter: .5em,
         strong[Username],
         strong[Password],
-        raw(l.username),
+        raw(l.name),
         raw(l.password),
       )
     ]
@@ -35,7 +44,7 @@
 
 
 = Host Logins
-#logins(hosts)
+#logins(config.accounts.hosts)
 
 = Competitor Logins
-#logins(competitors)
+#logins(config.accounts.competitors)

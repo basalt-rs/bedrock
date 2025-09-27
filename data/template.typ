@@ -1,7 +1,17 @@
+#import "./cmarker/lib.typ" as cmarker
+#import "./mitex/lib.typ": *
+
+#let config = json(sys.inputs.config)
+#let render(markdown) = cmarker.render(
+    markdown,
+    math: mitex,
+)
+
+#show table: t => align(center, t)
 #set table(
   stroke: (x, y) => if y == 0 {
     (bottom: 0.7pt + black)
-  } else { 
+  } else {
     (
       bottom: .1pt + black,
       left: if x == 0 { none } else {
@@ -13,13 +23,13 @@
 
 // Title page
 #align(center, {
-  text(size: 1.6em, weight: "bold")[#title]
+  text(size: 1.6em, weight: "bold")[#config.packet.title]
   box(line(length: 100%, stroke: 1pt))
 })
 
-#if type(preamble) != none [
-  #preamble
-]
+#if "preamble" in config.packet {
+  render(config.packet.preamble)
+}
 
 // Page heading
 #set page(
@@ -27,7 +37,7 @@
   header: context {
     if counter(page).get().first() > 1 [
       #set text(style: "italic")
-      #title
+      #config.packet.title
       #block(line(length: 100%, stroke: 0.5pt), above: 0.6em)
     ]
   })
@@ -65,15 +75,15 @@
     )
   }
 
-  #for q in problems {
+  #for q in config.packet.problems {
     [
       #pagebreak()
       = #q.title
       #if "description" in q {
-        q.description
+        render(q.description)
       }
 
-      #for (i, test) in q.tests.filter(t => t.visible).enumerate() {
+      #for (i, test) in q.tests.filter(t => "visible" in t and t.visible).enumerate() {
         [== Test case #{i+1}]
         test-case(test.input, test.output)
       }

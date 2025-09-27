@@ -1,19 +1,21 @@
 use std::io;
 
-#[tokio::main]
-async fn main() -> io::Result<()> {
-    #[cfg(feature = "dev")]
+use basalt_bedrock::render::typst::{LOGIN_TEMPLATE, PACKET_TEMPLATE};
+
+fn main() -> io::Result<()> {
     let config = std::fs::read_to_string("./examples/render-test.toml").unwrap();
-    #[cfg(not(feature = "dev"))]
-    let config = include_str!("./render-test.toml");
 
     let x = basalt_bedrock::Config::from_str(config, Some("one.toml")).unwrap();
 
-    let mut out = std::fs::File::create("test.pdf").unwrap();
-    let mut logins = std::fs::File::create("logins.pdf").unwrap();
+    let path = "packet.pdf";
+    let mut file = std::fs::File::create(path).unwrap();
+    let bytes = x.generate_pdf(&mut file, PACKET_TEMPLATE)?;
+    eprintln!("Wrote {} bytes to {}.", bytes, path);
 
-    x.write_pdf(&mut out, None)?;
-    x.write_login_pdf(&mut logins, None)?;
+    let path = "logins.pdf";
+    let mut file = std::fs::File::create(path).unwrap();
+    let bytes = x.generate_pdf(&mut file, LOGIN_TEMPLATE)?;
+    eprintln!("Wrote {} bytes to {}.", bytes, path);
 
     Ok(())
 }

@@ -160,27 +160,29 @@ This is `inline code`.
 ## Math
 
 Axiom of Infinity:  
-There is a set $I$ that contains $emptyset$ and an element and for each $a in I$ the set $a union {a} in I$ also.
+There is a set $I$ that contains $\emptyset$ and an element and for each $a \in I$ the set $a \cup \{a\} \in I$ also.
 $$
-& emptyset in I \
-& emptyset union {emptyset} in I => {emptyset} in I \
-& {emptyset} union {{emptyset}} in I => {emptyset,{emptyset}} in I \
+\begin{align}
+& \emptyset \in I \\
+& \emptyset \cup \{\emptyset\} \in I => \{\emptyset\} \in I \\
+& \{\emptyset\} \cup \{\{\emptyset\}\} \in I => \{\emptyset,\{\emptyset\}\} \in I
+\end{align}
 $$
 
-Notation: let $compose: S times S ->S$ be a binary operation: $forall a,b in S: a compose b = compose (a,b)$
+Notation: let $\circ: S \times S \to S$ be a binary operation: $\forall a,b \in S: a \circ b = \circ (a,b)$
 
 ---
 
-Definition: $forall m,n in NN$, the relation $+: NN times NN -> NN$ is defined by:
+Definition: $\forall m,n \in \mathbb{N}$, the relation $+: \mathbb{N} \times \mathbb{N} -> \mathbb{N}$ is defined by:
 
 $n + 1 = n'$  
 $n + m' = (n + m)'$
 
 Set theoretic terms:
 
-1. $forall m,n in NN: ((m,n), 1) cancel(in) +$
-2. $forall n in NN: ((n, 1), m') in +$
-3. $((n, m'), k') in + <==> ((n, m), k') in +$
+1. $\forall m,n \in \mathbb{NN}: ((m,n), 1) \not\in +$
+2. $\forall n \in \mathbb{NN}: ((n, 1), m') \in +$
+3. $((n, m'), k') \in + <==> ((n, m), k') \in +$
 
 '''
 
@@ -263,10 +265,10 @@ Read a number from standard input and print the factorial of that number.
 This is factorial:
 
 $$
-"fact"(n) := cases(
-  1 &"if" n <= 0,
-   n "fact"(n - 1) &"otherwise",
-)
+\text{fact}(n) := \begin{cases}
+    1                    & \text{if} n \leq 0, \\
+    n \text{fact}(n - 1) & \text{otherwise},   \\
+\end{cases}
 $$
 '''
 

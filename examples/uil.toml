@@ -192,7 +192,7 @@ had earned a test score of 85 with a combined difficulty level of 29,
 and therefore thinks 30 is a reasonable difficulty number for her to
 attempt.
 
-**Input:** The data file will contain an initial integer $Q$ ($10 <= Q <=
+**Input:** The data file will contain an initial integer $Q$ ($10 \leq Q \leq
 30$), indicating Q questions to follow. Each question data set consists
 of two values, an integer P representing the number of points that
 question is worth, an integer D indicating the difficulty level of the
@@ -337,7 +337,7 @@ around and around until the square of the side length of the square is
 in the very center. He needs your help to write this program. You up to
 the challenge?
 
-**Input:** Several integers $N$, each on a separate line, $2 <= N < 20$.
+**Input:** Several integers $N$, each on a separate line, $2 \leq N \lt 20$.
 
 **Output:** For each integer, output a spiral matrix as indicated above,
 and shown below. All column values must be left justified, with exactly
@@ -400,7 +400,7 @@ matrix of integers from 0-9 that represents the bitmap, the starting
 pixel, and a "color" from 0-9 to change to, will perform a flood fill
 operation on that bitmap.
 
-For example, in this $4 times 7$ matrix, the color at position $(2,2)$ is a 4,
+For example, in this $4 \times 7$ matrix, the color at position $(2,2)$ is a 4,
 as shown in bold. If this location was changed to the color 6, and then
 a flood fill is performed for all neighboring values of 4, resulting in
 the second matrix. The remaining 4 in the top right corner stays
@@ -421,7 +421,7 @@ unchanged since it is not reachable.
 
 **Input:** An initial integer $N$, representing $N$ data sets to follow.
 Each data set consists of two integers $R$ and $C$, indicating an $R
-times C$ matrix of integers, which follows on the next $R$ rows. The
+\times C$ matrix of integers, which follows on the next $R$ rows. The
 matrix consists of single integers in the range $0-9$, with single space
 separation. Following the matrix are two integers $A$ and $B$
 representing the target location in the matrix, followed by an integer
@@ -493,7 +493,7 @@ order. Columns are separated by the '`|`' symbol. Her input data will
 consist of one integer, between $1$ and $9$, inclusive, representing the
 number of boolean variables.
 
-**Input:** Several integers $N$, $1<=N<=9$.
+**Input:** Several integers $N$, $1 \leq N \leq 9$.
 
 **Output:** The corresponding boolean truth table representing all
 possible true/false combinations, as described above and shown in the
@@ -542,7 +542,7 @@ values.
 
 For purposes of consistency, she decides to label the three units of
 measure as $A$, $B$ and $C$, and then express the conversions as
-follows: $B = x A$ and $C = y B$, where $x$ and $y$ are real values
+follows: $B = xA$ and $C = yB$, where $x$ and $y$ are real values
 greater than $1$.
 
 In the metric system, $A$, $B$ and $C$ would be centimeters, meters and

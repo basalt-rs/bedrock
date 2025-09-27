@@ -2,10 +2,7 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    render::markdown::{MarkdownRenderable, RenderError},
-    roi, RawOrImport,
-};
+use crate::{render::markdown::MarkdownRenderable, roi, RawOrImport};
 
 /// Structure represnting data for a problem
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Default, Hash)]
@@ -22,32 +19,6 @@ pub struct Problem {
     /// The tests that will be used on this problem
     pub tests: Vec<Test>,
     pub points: Option<i32>,
-}
-
-impl Problem {
-    pub(crate) fn as_value(
-        &self,
-        world: &impl typst::World,
-    ) -> Result<typst::foundations::Value, RenderError> {
-        use crate::util;
-        use typst::foundations::Value;
-
-        let mut dict = typst::foundations::Dict::new();
-
-        if let Some(langs) = &self.languages {
-            dict.insert("languages".into(), util::convert(&langs));
-        }
-
-        dict.insert("title".into(), util::convert(&self.title));
-
-        if let Some(desc) = &self.description {
-            dict.insert("description".into(), Value::Content(desc.content(world)?));
-        }
-
-        dict.insert("tests".into(), util::convert(&self.tests));
-
-        Ok(Value::Dict(dict))
-    }
 }
 
 /// A specific test that will be used to validate that user's code.
