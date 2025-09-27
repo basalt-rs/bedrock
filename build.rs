@@ -1,5 +1,5 @@
 /// Get the cmarker plugin for typst
-#[cfg(feature = "render")]
+#[cfg(feature = "typst")]
 fn fetch_typst_plugin(name: &str, version: &str, files: &[&str]) {
     use flate2::read::GzDecoder;
     use reqwest::blocking as reqwest;
@@ -39,7 +39,7 @@ fn fetch_typst_plugin(name: &str, version: &str, files: &[&str]) {
     }
 }
 
-#[cfg(feature = "render")]
+#[cfg(feature = "typst")]
 macro_rules! add_typst_plugin {
     ($files: expr, $name: literal, $version: literal, [$($path: literal),+$(,)?]) => {
         fetch_typst_plugin($name, $version, &[$($path),+]);
@@ -49,7 +49,7 @@ macro_rules! add_typst_plugin {
 
 fn main() {
     println!("cargo::rerun-if-changed=build.rs");
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     {
         use std::io::Write;
         use std::path::PathBuf;

@@ -421,7 +421,7 @@ impl Config {
 
     /// Render a PDF related to this configuration, using a provided
     /// template written in [typst](https://typst.app).
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     pub fn generate_pdf(
         &self,
         writer: &mut impl std::io::Write,
@@ -432,7 +432,7 @@ impl Config {
 
     /// Render a PDF related to this configuration, using a provided
     /// template written in [typst](https://typst.app).
-    #[cfg(all(feature = "render", feature = "tokio"))]
+    #[cfg(all(feature = "typst", feature = "tokio"))]
     pub async fn generate_pdf_async<W, T>(
         &self,
         writer: &mut W,
@@ -454,7 +454,7 @@ impl Config {
     /// [`typst::PACKET_TEMPLATE`]
     ///
     /// [`typst::PACKET_TEMPLATE`]: crate::render::typst::PACKET_TEMPLATE
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     #[deprecated(since = "1.0.1", note = "use Config::generate_pdf")]
     pub fn render_pdf(&self, template: Option<String>) -> std::io::Result<Vec<u8>> {
         let template = template
@@ -474,7 +474,7 @@ impl Config {
     /// [`typst::PACKET_TEMPLATE`]
     ///
     /// [`typst::PACKET_TEMPLATE`]: crate::render::typst::PACKET_TEMPLATE
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     #[deprecated(since = "1.0.1", note = "use Config::generate_pdf")]
     pub fn write_pdf(
         &self,
@@ -497,7 +497,7 @@ impl Config {
     /// [`typst::LOGIN_TEMPLATE`]
     ///
     /// [`typst::LOGIN_TEMPLATE`]: crate::render::typst::LOGIN_TEMPLATE
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     #[deprecated(since = "1.0.1", note = "use Config::generate_pdf")]
     pub fn render_login_pdf(&self, template: Option<String>) -> std::io::Result<Vec<u8>> {
         let template = template
@@ -517,7 +517,7 @@ impl Config {
     /// [`typst::LOGIN_TEMPLATE`]
     ///
     /// [`typst::LOGIN_TEMPLATE`]: crate::render::typst::LOGIN_TEMPLATE
-    #[cfg(feature = "render")]
+    #[cfg(feature = "typst")]
     #[deprecated(since = "1.0.1", note = "use Config::generate_pdf")]
     pub fn write_login_pdf(
         &self,

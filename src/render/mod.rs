@@ -1,3 +1,3 @@
 pub mod markdown;
-#[cfg(feature = "render")]
+#[cfg(feature = "typst")]
 pub mod typst;

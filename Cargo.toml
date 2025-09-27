@@ -14,7 +14,7 @@ exclude = [".github"]
 [features]
 tokio = ["dep:tokio", "dep:tmpdir"]
 render = ["dep:tempfile", "serde_json"]
-default = ["render", "tokio"]
+default = ["typst"]
 
 [dependencies]
 miette = { version = "7.6.0", features = ["fancy"] }
@@ -36,7 +36,7 @@ url = { version = "2.5.7", features = ["serde"] }
 humantime = "2.2.0"
 
 [dev-dependencies]
-basalt-bedrock = { path = ".", features = ["tokio"] }
+basalt-bedrock = { path = ".", features = ["tokio", "typst"] }
 tokio = { version = "1.47.1", features = ["full"] }
 
 [build-dependencies]
