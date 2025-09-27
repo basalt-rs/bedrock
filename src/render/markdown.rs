@@ -56,7 +56,7 @@ impl MarkdownRenderable {
         Self(raw.into())
     }
 
-    pub const fn raw(&self) -> &str {
+    pub fn raw(&self) -> &str {
         self.0.as_str()
     }
 
