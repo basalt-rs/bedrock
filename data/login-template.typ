@@ -7,6 +7,10 @@
     math: mitex,
 )
 
+#set document(
+  title: config.packet.title,
+)
+
 // Page heading
 #set page(
   header: [
@@ -41,7 +45,6 @@
     ]
   })
 )
-
 
 = Host Logins
 #logins(config.accounts.hosts)

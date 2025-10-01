@@ -7,12 +7,12 @@ fn main() -> io::Result<()> {
 
     let x = basalt_bedrock::Config::from_str(config, Some("one.toml")).unwrap();
 
-    let path = "packet.pdf";
+    let path = "compile-packet.pdf";
     let mut file = std::fs::File::create(path).unwrap();
     let bytes = x.generate_pdf(&mut file, PACKET_TEMPLATE)?;
     eprintln!("Wrote {} bytes to {}.", bytes, path);
 
-    let path = "logins.pdf";
+    let path = "compile-logins.pdf";
     let mut file = std::fs::File::create(path).unwrap();
     let bytes = x.generate_pdf(&mut file, LOGIN_TEMPLATE)?;
     eprintln!("Wrote {} bytes to {}.", bytes, path);

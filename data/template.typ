@@ -7,6 +7,10 @@
     math: mitex,
 )
 
+#set document(
+  title: config.packet.title,
+)
+
 #show table: t => align(center, t)
 #set table(
   stroke: (x, y) => if y == 0 {
