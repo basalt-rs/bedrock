@@ -32,7 +32,7 @@ toml_edit = { version = "0.22.27", features = ["serde"] }
 typst = "0.12.0"
 typst-kit = { version = "0.12.0", features = ["embed-fonts"] }
 typst-pdf = "0.12.0"
-typst-svg = "0.12.0"
+typst-svg = "0.13.1"
 ecow = "0.2.6"
 syntect = { version = "5.2.0", default-features = false, features = [
     "default-fancy",
