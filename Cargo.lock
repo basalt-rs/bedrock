@@ -122,7 +122,7 @@ dependencies = [
  "lazy_static",
  "miette",
  "phf 0.11.3",
- "pulldown-cmark",
+ "pulldown-cmark 0.13.0",
  "pulldown-cmark-ast",
  "serde",
  "serde_json",
@@ -1834,6 +1834,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "679341d22c78c6c649893cbd6c3278dcbe9fc4faa62fea3a9296ae2b50c14625"
 dependencies = [
  "bitflags 2.9.3",
+ "memchr",
+ "unicase",
+]
+
+[[package]]
+name = "pulldown-cmark"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e8bbe1a966bd2f362681a44f6edce3c2310ac21e4d5067a6e7ec396297a6ea0"
+dependencies = [
+ "bitflags 2.9.3",
  "getopts",
  "memchr",
  "pulldown-cmark-escape",
@@ -1846,7 +1857,7 @@ version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6653b5ed48350ac75557c7af82d2c746a5fce5d85cae1afd8ab5f0dddd54ca8d"
 dependencies = [
- "pulldown-cmark",
+ "pulldown-cmark 0.11.3",
 ]
 
 [[package]]
