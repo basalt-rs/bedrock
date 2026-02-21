@@ -105,6 +105,32 @@ static BUILTINS: phf::Map<&'static str, Builtin> = phf_map! {
             }
         },
     },
+    "ruby" => Builtin {
+        builtin: BuiltInLanguage::Ruby,
+        source_file: "solution.rb",
+        syntax: Syntax::Ruby,
+        versions: phf_ordered_map! {
+            "latest" => LanguageVersion {
+                build: None,
+                run: "ruby solution.rb",
+                install_command: Some("dnf install ruby -y"),
+                init_command: None,
+            }
+        },
+    },
+    "go" => Builtin {
+        builtin: BuiltInLanguage::Go,
+        source_file: "solution.go",
+        syntax: Syntax::Golang,
+        versions: phf_ordered_map! {
+            "latest" => LanguageVersion {
+                build: Some("go build -o out solution.go"),
+                run: "./out",
+                install_command: Some("dnf install go -y"),
+                init_command: None,
+            }
+        },
+    },
 };
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, VariantNames)]
@@ -114,6 +140,8 @@ pub enum BuiltInLanguage {
     Java,
     JavaScript,
     Rust,
+    Ruby,
+    Go,
 }
 
 impl BuiltInLanguage {
@@ -145,6 +173,8 @@ impl BuiltInLanguage {
             Self::Java => "java",
             Self::JavaScript => "javascript",
             Self::Rust => "rust",
+            Self::Ruby => "ruby",
+            Self::Go => "go",
         }
     }
 
@@ -154,6 +184,8 @@ impl BuiltInLanguage {
             Self::Java => "Java",
             Self::JavaScript => "JavaScript",
             Self::Rust => "Rust",
+            Self::Ruby => "Ruby",
+            Self::Go => "Go",
         }
     }
 
