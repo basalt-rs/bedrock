@@ -7,6 +7,7 @@ use pulldown_cmark_ast::{Ast, Tree};
 use serde::{Deserialize, Serialize};
 use syntect::{html::ClassStyle, parsing::SyntaxSet, util::LinesWithEndings};
 use typst::{
+    World,
     diag::{EcoString, SourceDiagnostic},
     foundations::{Content, Packed, Scope, Smart, Value},
     layout::{Celled, Length, Ratio, Sizing, TrackSizings},
@@ -17,7 +18,6 @@ use typst::{
     syntax::Span,
     text::{LinebreakElem, RawContent, RawElem, SpaceElem, StrikeElem, TextElem},
     visualize::LineElem,
-    World,
 };
 
 use crate::render::typst::TypstWrapperWorld;

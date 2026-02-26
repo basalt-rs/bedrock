@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use basalt_bedrock::render::markdown::MarkdownRenderable;
-use syntect::html::{css_for_theme_with_class_style, ClassStyle};
+use syntect::html::{ClassStyle, css_for_theme_with_class_style};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let r = MarkdownRenderable::from_raw(

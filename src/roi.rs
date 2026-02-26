@@ -7,13 +7,13 @@ use std::{
 
 use miette::NamedSource;
 use serde::{
+    Deserialize, Serialize,
     de::{
+        DeserializeOwned, IntoDeserializer, MapAccess, Visitor,
         value::{
             EnumAccessDeserializer, MapAccessDeserializer, SeqAccessDeserializer, UnitDeserializer,
         },
-        DeserializeOwned, IntoDeserializer, MapAccess, Visitor,
     },
-    Deserialize, Serialize,
 };
 
 use crate::ConfigReadError;

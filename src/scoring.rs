@@ -1,4 +1,4 @@
-use evalexpr::{context_map, eval_with_context, DefaultNumericTypes, HashMapContext, Value};
+use evalexpr::{DefaultNumericTypes, HashMapContext, Value, context_map, eval_with_context};
 
 use crate::Config;
 
