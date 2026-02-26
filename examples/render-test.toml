@@ -160,27 +160,29 @@ This is `inline code`.
 ## Math
 
 Axiom of Infinity:  
-There is a set $I$ that contains $emptyset$ and an element and for each $a in I$ the set $a union {a} in I$ also.
+There is a set $I$ that contains $\emptyset$ and an element and for each $a \in I$ the set $a \cup \{a\} \in I$ also.
 $$
-& emptyset in I \
-& emptyset union {emptyset} in I => {emptyset} in I \
-& {emptyset} union {{emptyset}} in I => {emptyset,{emptyset}} in I \
+\begin{align}
+& \emptyset \in I \\
+& \emptyset \cup \{\emptyset\} \in I => \{\emptyset\} \in I \\
+& \{\emptyset\} \cup \{\{\emptyset\}\} \in I => \{\emptyset,\{\emptyset\}\} \in I
+\end{align}
 $$
 
-Notation: let $compose: S times S ->S$ be a binary operation: $forall a,b in S: a compose b = compose (a,b)$
+Notation: let $\circ: S \times S \to S$ be a binary operation: $\forall a,b \in S: a \circ b = \circ (a,b)$
 
 ---
 
-Definition: $forall m,n in NN$, the relation $+: NN times NN -> NN$ is defined by:
+Definition: $\forall m,n \in \mathbb{N}$, the relation $+: \mathbb{N} \times \mathbb{N} -> \mathbb{N}$ is defined by:
 
 $n + 1 = n'$  
 $n + m' = (n + m)'$
 
 Set theoretic terms:
 
-1. $forall m,n in NN: ((m,n), 1) cancel(in) +$
-2. $forall n in NN: ((n, 1), m') in +$
-3. $((n, m'), k') in + <==> ((n, m), k') in +$
+1. $\forall m,n \in \mathbb{NN}: ((m,n), 1) \not\in +$
+2. $\forall n \in \mathbb{NN}: ((n, 1), m') \in +$
+3. $((n, m'), k') \in + <==> ((n, m), k') \in +$
 
 '''
 
@@ -251,46 +253,3 @@ visible = true
 [[packet.problems.tests]]
 input = "racecar"
 output = "racecar"
-
-
-
-
-[[packet.problems]]
-title = "Factorial"
-description = '''
-Read a number from standard input and print the factorial of that number.
-
-This is factorial:
-
-$$
-"fact"(n) := cases(
-  1 &"if" n <= 0,
-   n "fact"(n - 1) &"otherwise",
-)
-$$
-'''
-
-[[packet.problems.tests]]
-input = "0"
-output = "0"
-visible = true
-
-[[packet.problems.tests]]
-input = "1"
-output = "1"
-visible = true
-
-[[packet.problems.tests]]
-input = "2"
-output = "2"
-visible = true
-
-[[packet.problems.tests]]
-input = "3"
-output = "6"
-visible = true
-
-[[packet.problems.tests]]
-input = "4"
-output = "24"
-visible = true

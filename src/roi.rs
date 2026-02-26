@@ -17,10 +17,28 @@ pub struct Deser;
 #[non_exhaustive]
 pub struct Raw;
 
-#[derive(Serialize, Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Ord, PartialOrd, Hash, Default)]
 pub struct RawOrImport<T, Mode = Deser>(T, PhantomData<Mode>)
 where
     Mode: Sized;
+
+impl<T: Serialize> Serialize for RawOrImport<T, Deser> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
+impl<T: AsRef<str>> Serialize for RawOrImport<T, Raw> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(self.0.as_ref())
+    }
+}
 
 impl<'de, T> Deserialize<'de> for RawOrImport<T, Deser>
 where
