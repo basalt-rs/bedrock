@@ -3,8 +3,9 @@ use std::collections::BTreeSet;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    RawOrImport,
     render::markdown::{MarkdownRenderable, RenderError},
-    roi, RawOrImport,
+    roi,
 };
 
 /// Structure represnting data for a problem
