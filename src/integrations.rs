@@ -2,7 +2,17 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, OneOrMany};
+use strum::EnumIs;
 use url::Url;
+
+#[serde_as]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize, EnumIs)]
+#[serde(untagged)]
+pub enum Webhook {
+    All(Url),
+    AllStructured { endpoint: Url },
+    Granular { endpoint: Url, events: Vec<String> },
+}
 
 /// Contains information for all things related to programmability and
 /// external integrations in Basalt.
@@ -15,5 +25,5 @@ pub struct Integrations {
     pub event_handlers: Vec<PathBuf>,
     #[serde_as(as = "OneOrMany<_>")]
     #[serde(default, alias = "webhook")]
-    pub webhooks: Vec<Url>,
+    pub webhooks: Vec<Webhook>,
 }
