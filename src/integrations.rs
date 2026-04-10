@@ -13,7 +13,7 @@ pub struct Integrations {
         alias = "event_handler",
         deserialize_with = "deserialize_deprecated"
     )]
-    #[deprecated(since = "1.0.1", note = "Deprecated in favor of webhooks")]
+    #[deprecated(since = "1.1.0", note = "Deprecated in favor of webhooks")]
     pub event_handlers: (),
     #[serde_as(as = "OneOrMany<_>")]
     #[serde(default, alias = "webhook")]
