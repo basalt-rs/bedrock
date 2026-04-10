@@ -16,3 +16,5 @@ target/
 # Examples output
 *.pdf
 *.html
+
+.direnv/
