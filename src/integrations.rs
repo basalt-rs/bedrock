@@ -1,4 +1,4 @@
-use serde::{de::IgnoredAny, Deserialize, Deserializer, Serialize};
+use serde::{de::IgnoredAny, Deserialize, Serialize};
 use serde_with::{serde_as, OneOrMany};
 use url::Url;
 
@@ -11,20 +11,10 @@ pub struct Integrations {
     #[serde(
         default,
         alias = "event_handler",
-        deserialize_with = "deserialize_deprecated"
     )]
     #[deprecated(since = "1.1.0", note = "Deprecated in favor of webhooks")]
-    pub event_handlers: (),
+    pub event_handlers: IgnoredAny,
     #[serde_as(as = "OneOrMany<_>")]
     #[serde(default, alias = "webhook")]
     pub webhooks: Vec<Url>,
-}
-
-fn deserialize_deprecated<'de, D>(deserializer: D) -> Result<(), D::Error>
-where
-    D: Deserializer<'de>,
-{
-    // Consume and discard whatever value is there
-    IgnoredAny::deserialize(deserializer)?;
-    Ok(())
 }
