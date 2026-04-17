@@ -3,11 +3,18 @@ use basalt_bedrock::Config;
 const FILE: &str = include_str!("./events.toml");
 const FILE_SINGLE: &str = include_str!("./events-single.toml");
 const ONE_FILE: &str = include_str!("../examples/one.toml");
+const NO_EVENTS: &str = include_str!("./events-are-optional.toml");
 
 #[test]
 fn parse_empty_integration_settings() -> miette::Result<()> {
     let config = Config::from_str(ONE_FILE, Some("one.toml"))?;
     assert_eq!(config.integrations.webhooks.len(), 0);
+    Ok(())
+}
+
+#[test]
+fn parse_no_handlers() -> miette::Result<()> {
+    let _ = Config::from_str(NO_EVENTS, Some("events-are-optional.toml"))?;
     Ok(())
 }
 

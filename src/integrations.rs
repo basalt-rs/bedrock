@@ -1,4 +1,4 @@
-use serde::{de::IgnoredAny, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, OneOrMany};
 use url::Url;
 
@@ -10,10 +10,11 @@ pub struct Integrations {
     /// Paths to files that will be executed on server events
     #[serde(
         default,
+        skip,
         alias = "event_handler",
     )]
     #[deprecated(since = "1.1.0", note = "Deprecated in favor of webhooks")]
-    pub event_handlers: IgnoredAny,
+    pub event_handlers: (),
     #[serde_as(as = "OneOrMany<_>")]
     #[serde(default, alias = "webhook")]
     pub webhooks: Vec<Url>,
