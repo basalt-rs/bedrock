@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, OneOrMany};
 use url::Url;
@@ -10,9 +8,9 @@ use url::Url;
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Integrations {
     /// Paths to files that will be executed on server events
-    #[serde_as(as = "OneOrMany<_>")]
-    #[serde(default, alias = "event_handler")]
-    pub event_handlers: Vec<PathBuf>,
+    #[serde(default, skip, alias = "event_handler")]
+    #[deprecated(since = "1.1.0", note = "Deprecated in favor of webhooks")]
+    pub event_handlers: (),
     #[serde_as(as = "OneOrMany<_>")]
     #[serde(default, alias = "webhook")]
     pub webhooks: Vec<Url>,
