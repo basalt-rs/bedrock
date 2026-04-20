@@ -1,4 +1,4 @@
-use basalt_bedrock::{scoring::*, Config};
+use basalt_bedrock::{Config, scoring::*};
 const EXAMPLE_ONE_CONTENT: &str = include_str!("../examples/one.toml");
 const EXAMPLE_TWO_CONTENT: &str = include_str!("../examples/two.toml");
 
