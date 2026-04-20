@@ -341,6 +341,7 @@ pub enum Language {
         run: String,
         source_file: String,
         syntax: Syntax,
+        workspace: Option<String>,
     },
 }
 
@@ -398,6 +399,17 @@ impl Language {
         match self {
             Language::BuiltIn { language, .. } => language.syntax(),
             Language::Custom { syntax, .. } => *syntax,
+        }
+    }
+
+    pub fn workspace(&self) -> Option<&str> {
+        match self {
+            Language::BuiltIn { .. } => None,
+            Language::Custom {
+                workspace: Some(workspace),
+                ..
+            } => Some(workspace),
+            _ => None,
         }
     }
 }
