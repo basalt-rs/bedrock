@@ -1,148 +1,167 @@
-// Adapted from: https://github.com/tfachmann/typst-as-library/blob/main/src/lib.rs
+use std::process::Stdio;
 
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use thiserror::Error;
 
-use comemo::track;
-use typst::diag::{FileError, FileResult};
-use typst::foundations::{Bytes, Datetime};
-use typst::syntax::{FileId, Source};
-use typst::text::{Font, FontBook};
-use typst::utils::LazyHash;
-use typst::{Library, World};
-use typst_kit::fonts::{FontSlot, Fonts};
+use crate::Config;
 
-/// This struct is needed so we can return a single value from the `lazy_static`
-struct FontsHolder {
-    book: LazyHash<FontBook>,
-    fonts: Vec<FontSlot>,
+/// Files copied for plugin support.  These are fetched in the build.rs
+const PLUGIN_FILES: &[(&str, &[u8])] =
+    include!(concat!(env!("OUT_DIR"), "/typst-plugins/include.rs"));
+
+pub const PACKET_TEMPLATE: &str = include_str!("../../data/template.typ");
+pub const LOGIN_TEMPLATE: &str = include_str!("../../data/login-template.typ");
+
+#[derive(Debug, Error)]
+pub enum PdfGenerationError {
+    #[error("`typst` command not in system path")]
+    MissingTypstCommand,
+    #[error("Typst exited unsuccessfully")]
+    TypstError,
+    #[error(transparent)]
+    IoError(#[from] std::io::Error),
 }
 
-lazy_static::lazy_static! {
-    static ref FONTS: FontsHolder = {
-        // TODO: System fonts? Adds significant delay and may not be necessary.
-        let fonts = Fonts::searcher().include_system_fonts(false).search();
-        FontsHolder { book: fonts.book.into(), fonts: fonts.fonts }
+impl From<PdfGenerationError> for std::io::Error {
+    fn from(value: PdfGenerationError) -> Self {
+        match value {
+            PdfGenerationError::MissingTypstCommand => std::io::Error::other(value),
+            PdfGenerationError::TypstError => std::io::Error::other(value),
+            PdfGenerationError::IoError(error) => error,
+        }
+    }
+}
+
+pub(crate) fn generate_pdf(
+    config: &Config,
+    writer: &mut impl std::io::Write,
+    template: impl AsRef<str>,
+) -> Result<u64, PdfGenerationError> {
+    use std::fs;
+
+    let tmp = tempfile::tempdir()?;
+
+    let config_path = tmp.path().join("config.json");
+    let mut out = std::io::BufWriter::new(fs::File::create_new(&config_path)?);
+    serde_json::to_writer_pretty(&mut out, config).map_err(std::io::Error::other)?;
+    drop(out); // flush the writer
+
+    for (path, content) in PLUGIN_FILES {
+        let path = tmp.path().join(path);
+        fs::create_dir_all(path.parent().expect("We always have at least the tempdir"))?;
+        fs::write(path, content)?;
+    }
+
+    let template_path = tmp.path().join("template.typ");
+    fs::write(&template_path, template.as_ref())?;
+
+    // typst compile --root <tmp> --input "config=config.json" template.typ -
+    let child = std::process::Command::new("typst")
+        .arg("compile")
+        .current_dir(tmp.path())
+        .arg("--root") // --root <tmp>
+        .arg(tmp.path())
+        .args(["--input", "config=config.json"])
+        .arg("template.typ") // input file
+        .arg("-") // output file
+        .stdout(Stdio::piped())
+        .spawn();
+
+    let mut child = match child {
+        Ok(child) => child,
+        Err(e) => {
+            return Err(match e.kind() {
+                std::io::ErrorKind::NotFound => PdfGenerationError::MissingTypstCommand,
+                _ => PdfGenerationError::IoError(e),
+            });
+        }
     };
-}
 
-/// Main interface that determines the environment for Typst.
-pub struct TypstWrapperWorld {
-    /// The content of a source.
-    source: Source,
+    let mut stdout = child.stdout.take().expect("We're piping stdout");
+    let bytes = std::io::copy(&mut stdout, writer)?;
 
-    /// The standard library.
-    pub(crate) library: LazyHash<Library>,
+    let status = child.wait()?;
 
-    /// Datetime.
-    time: time::OffsetDateTime,
-
-    /// Map of all known files.
-    files: Arc<Mutex<HashMap<FileId, FileEntry>>>,
-}
-
-impl TypstWrapperWorld {
-    pub fn new(source: impl Into<String>) -> Self {
-        Self {
-            library: LazyHash::new(Library::default()),
-            source: Source::detached(source),
-            time: time::OffsetDateTime::now_utc(),
-            files: Arc::new(Mutex::new(HashMap::new())),
-        }
-    }
-
-    /// Helper to handle file requests.
-    fn get_file(&self, id: FileId) -> FileResult<FileEntry> {
-        let mut files = self.files.lock().map_err(|_| FileError::AccessDenied)?;
-        if let Some(entry) = files.get(&id) {
-            return Ok(entry.clone());
-        }
-        let path = if let Some(package) = id.package() {
-            Err(typst::diag::PackageError::NotFound(package.clone()))?
-        } else {
-            id.vpath().resolve(&std::env::current_dir().unwrap())
-        }
-        .ok_or(FileError::AccessDenied)?;
-
-        let content = std::fs::read(&path).map_err(|error| FileError::from_io(error, &path))?;
-        Ok(files
-            .entry(id)
-            .or_insert(FileEntry::new(content, None))
-            .clone())
+    if status.success() {
+        drop(tmp);
+        Ok(bytes)
+    } else {
+        drop(tmp);
+        Err(PdfGenerationError::TypstError)
     }
 }
 
-/// A File that will be stored in the HashMap.
-#[derive(Clone, Debug)]
-struct FileEntry {
-    bytes: Bytes,
-    source: Option<Source>,
-}
+#[cfg(feature = "tokio")]
+pub(crate) async fn generate_pdf_async<'a, W, T>(
+    config: &'a Config,
+    writer: &'a mut W,
+    template: T,
+) -> Result<u64, PdfGenerationError>
+where
+    W: tokio::io::AsyncWrite + Unpin,
+    T: AsRef<str> + Send + Sync + 'static,
+{
+    use tokio::{fs, task::JoinSet};
 
-impl FileEntry {
-    fn new(bytes: Vec<u8>, source: Option<Source>) -> Self {
-        Self {
-            bytes: bytes.into(),
-            source,
+    let tmp = tmpdir::TmpDir::new("bedrock").await?;
+    let tmp_path = tmp.to_path_buf();
+
+    let config_path = tmp.as_ref().join("config.json");
+    let config = serde_json::to_string(config).map_err(std::io::Error::other)?;
+    fs::write(&config_path, config).await?;
+
+    let mut js = JoinSet::new();
+    for (path, content) in PLUGIN_FILES {
+        let path = tmp_path.join(path);
+        js.spawn(async move {
+            fs::create_dir_all(path.parent().expect("We always have at least the tempdir")).await?;
+            fs::write(path, content).await?;
+            Ok::<_, PdfGenerationError>(())
+        });
+    }
+
+    js.spawn(async move {
+        let template_path = tmp_path.join("template.typ");
+        fs::write(&template_path, template.as_ref()).await?;
+        Ok::<_, PdfGenerationError>(())
+    });
+
+    // NOTE: we're not using `join_all` to not allocate the vec
+    while let Some(x) = js.join_next().await {
+        x.map_err(std::io::Error::from)??;
+    }
+
+    // typst compile --root <tmp> --input "config=config.json" template.typ -
+    let child = tokio::process::Command::new("typst")
+        .arg("compile")
+        .current_dir(tmp.as_ref())
+        .arg("--root") // --root <tmp>
+        .arg(tmp.as_ref())
+        .args(["--input", "config=config.json"])
+        .arg("template.typ") // input file
+        .arg("-") // output file
+        .stdout(Stdio::piped())
+        .spawn();
+
+    let mut child = match child {
+        Ok(child) => child,
+        Err(e) => {
+            return Err(match e.kind() {
+                std::io::ErrorKind::NotFound => PdfGenerationError::MissingTypstCommand,
+                _ => PdfGenerationError::IoError(e),
+            });
         }
-    }
+    };
 
-    fn source(&mut self, id: FileId) -> FileResult<Source> {
-        let source = if let Some(source) = &self.source {
-            source
-        } else {
-            let contents = std::str::from_utf8(&self.bytes).map_err(|_| FileError::InvalidUtf8)?;
-            let contents = contents.trim_start_matches('\u{feff}');
-            let source = Source::new(id, contents.into());
-            self.source.insert(source)
-        };
-        Ok(source.clone())
-    }
-}
+    let mut stdout = child.stdout.take().expect("We're piping stdout");
+    let bytes = tokio::io::copy(&mut stdout, writer).await?;
 
-#[track]
-impl typst::World for TypstWrapperWorld {
-    /// Standard library.
-    fn library(&self) -> &LazyHash<Library> {
-        &self.library
-    }
+    let status = child.wait().await?;
 
-    /// Metadata about all known Books.
-    fn book(&self) -> &LazyHash<FontBook> {
-        &FONTS.book
-    }
-
-    /// Accessing the main source file.
-    fn main(&self) -> FileId {
-        self.source.id()
-    }
-
-    /// Accessing a specified source file (based on `FileId`).
-    fn source(&self, id: FileId) -> FileResult<Source> {
-        if id == self.source.id() {
-            Ok(self.source.clone())
-        } else {
-            self.get_file(id)?.source(id)
-        }
-    }
-
-    /// Accessing a specified file (non-file).
-    fn file(&self, id: FileId) -> FileResult<Bytes> {
-        self.get_file(id).map(|file| file.bytes.clone())
-    }
-
-    /// Accessing a specified font per index of font book.
-    fn font(&self, id: usize) -> Option<Font> {
-        FONTS.fonts[id].get()
-    }
-
-    /// Get the current date.
-    ///
-    /// Optionally, an offset in hours is given.
-    fn today(&self, offset: Option<i64>) -> Option<Datetime> {
-        let offset = offset.unwrap_or(0);
-        let offset = time::UtcOffset::from_hms(offset.try_into().ok()?, 0, 0).ok()?;
-        let time = self.time.checked_to_offset(offset)?;
-        Some(Datetime::Date(time.date()))
+    if status.success() {
+        drop(tmp);
+        Ok(bytes)
+    } else {
+        drop(tmp);
+        Err(PdfGenerationError::TypstError)
     }
 }

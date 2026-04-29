@@ -1,18 +1,17 @@
 use std::io;
 
+use basalt_bedrock::{render::typst::PACKET_TEMPLATE, Config};
+use tokio::fs::{self, File};
+
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    // using the dev feature so we don't have have to recompile for every change to the toml
-    #[cfg(feature = "dev")]
-    let config = std::fs::read_to_string("./examples/uil.toml").unwrap();
-    #[cfg(not(feature = "dev"))]
-    let config = include_str!("./uil.toml");
+    let config = fs::read_to_string("./examples/uil.toml").await.unwrap();
+    let x = Config::from_str(config, Some("one.toml")).unwrap();
+    let out_path = "uil.pdf";
+    let mut out = File::create(out_path).await.unwrap();
+    let bytes = x.generate_pdf_async(&mut out, PACKET_TEMPLATE).await?;
 
-    let x = basalt_bedrock::Config::from_str(config, Some("one.toml")).unwrap();
-
-    let mut out = std::fs::File::create("uil.pdf").unwrap();
-
-    x.write_pdf(&mut out, None)?;
+    eprintln!("Wrote {} bytes to {}.", bytes, out_path);
 
     Ok(())
 }

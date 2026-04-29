@@ -196,7 +196,7 @@ impl BuiltInLanguage {
     pub fn build_command(self, version: &Version) -> Option<&str> {
         let bil = &BUILTINS[self.name()];
         match version {
-            Version::Latest => bil.versions.values().last()?.build,
+            Version::Latest => bil.versions.values().next_back()?.build,
             Version::Specific(v) => bil.versions[v].build,
         }
     }
@@ -207,7 +207,7 @@ impl BuiltInLanguage {
             Version::Latest => {
                 bil.versions
                     .values()
-                    .last()
+                    .next_back()
                     .expect("all language must have at least one version")
                     .run
             }
@@ -221,7 +221,7 @@ impl BuiltInLanguage {
             Version::Latest => {
                 bil.versions
                     .values()
-                    .last()
+                    .next_back()
                     .expect("all language must have at least one version")
                     .install_command
             }
@@ -235,7 +235,7 @@ impl BuiltInLanguage {
             Version::Latest => {
                 bil.versions
                     .values()
-                    .last()
+                    .next_back()
                     .expect("all language must have at least one version")
                     .init_command
             }
